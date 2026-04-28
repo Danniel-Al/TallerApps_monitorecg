@@ -1,9 +1,11 @@
 // lib/screens/result_screen.dart
-// PANTALLA DE RESULTADOS - VERSIÓN CORREGIDA
+// PANTALLA DE RESULTADOS CON GUARDADO CORREGIDO
 
 import 'package:flutter/material.dart';
 import '../services/recommendation_service.dart';
 import '../services/comparison_service.dart';
+import '../services/memory_history_service.dart';
+import '../models/measurement_record.dart';
 import 'recommendation_screen.dart';
 import 'comparison_screen.dart';
 
@@ -24,6 +26,26 @@ class ResultScreen extends StatelessWidget {
     required this.symptoms,
     required this.medications,
   });
+
+  void _saveMeasurement(String recommendation, ComparisonResult comparison) {
+    final record = MeasurementRecord(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      dateTime: DateTime.now(),
+      heartRate: heartRate,
+      ageRange: ageRange,
+      gender: gender,
+      conditions: conditions,
+      symptoms: symptoms,
+      medications: medications,
+      recommendation: recommendation,
+      comparisonStatus: comparison.status,
+      comparisonText: '${comparison.status} - ${comparison.percentile}',
+    );
+    MemoryHistoryService.saveMeasurement(record);
+    
+    // Mostrar mensaje de confirmación
+    debugPrint('✅ Medición guardada: ${heartRate} lpm a las ${DateTime.now()}');
+  }
 
   String _getStatusText() {
     if (heartRate < 60) return 'Bradicardia (Ritmo lento)';
@@ -84,7 +106,6 @@ class ResultScreen extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  // Usar el servicio de recomendación
                   final recommendation = RecommendationService.getRecommendation(
                     heartRate: heartRate,
                     ageRange: ageRange,
@@ -93,7 +114,12 @@ class ResultScreen extends StatelessWidget {
                     symptoms: symptoms,
                     medications: medications,
                   );
-                  // Navegar a la pantalla de recomendación
+                  final comparison = ComparisonService.compare(
+                    heartRate: heartRate,
+                    ageRange: ageRange,
+                    gender: gender,
+                  );
+                  _saveMeasurement(recommendation, comparison);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -123,6 +149,25 @@ class ResultScreen extends StatelessWidget {
                     ageRange: ageRange,
                     gender: gender,
                   );
+                  final recommendation = RecommendationService.getRecommendation(
+                    heartRate: heartRate,
+                    ageRange: ageRange,
+                    gender: gender,
+                    conditions: conditions,
+                    symptoms: symptoms,
+                    medications: medications,
+                  );
+                  _saveMeasurement(recommendation, comparison);
+                  
+                  // Mostrar snackbar de confirmación
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('✅ Medición guardada en historial'),
+                      backgroundColor: Colors.green,
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                  
                   Navigator.push(
                     context,
                     MaterialPageRoute(
