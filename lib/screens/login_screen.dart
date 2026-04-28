@@ -1,5 +1,6 @@
 //Pantalla de inicio de sesión
 import 'package:flutter/material.dart';
+import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -81,9 +82,13 @@ class _LoginScreenState extends State<LoginScreen> {
               child: const Text('Iniciar sesión', style: TextStyle(fontSize: 16)),
             ),
             const SizedBox(height: 16),
-            TextButton( //Botón para ir al registro (Aún no funciona)
-              onPressed: () { //Navegar a pantalla de registro (siguiente paso)
-                // TODO: Navegar a registro (próximo paso)
+              // Botón para ir al registro (AHORA SÍ FUNCIONA)
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                );
               },
               child: const Text('¿No tienes cuenta? Regístrate'),
             ),
