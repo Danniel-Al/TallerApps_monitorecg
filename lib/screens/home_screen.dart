@@ -1,45 +1,56 @@
 // lib/screens/home_screen.dart
-// PANTALLA PRINCIPAL (TEMPORAL)
+// PANTALLA PRINCIPAL CON PESTAÑAS (BOTTOM NAVIGATION BAR)
+// Pestaña 1: Tomar medición
+// Pestaña 2: Perfil
 
 import 'package:flutter/material.dart';
+import 'measurement_screen.dart';
+import 'profile_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _selectedIndex = 0;  // 0: Medición, 1: Perfil
+
+  // Lista de pantallas para cada pestaña
+  final List<Widget> _screens = [
+    const MeasurementScreen(),   // Pestaña de medición
+    const ProfileScreen(),       // Pestaña de perfil (la crearemos después)
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text(
-          'Monitor ECG',
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.red,
-        centerTitle: true,
-        elevation: 0,
-      ),
-      body: const Center(
-        child: Padding(
-          padding: EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.favorite, size: 80, color: Colors.red),
-              SizedBox(height: 20),
-              Text(
-                '¡Bienvenido!',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.red),
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Próximamente: medición de frecuencia cardíaca,\nrecomendaciones personalizadas y más.',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16, color: Colors.black54),
-              ),
-            ],
+      body: _screens[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        selectedItemColor: Colors.red,
+        unselectedItemColor: Colors.grey,
+        selectedFontSize: 12,
+        unselectedFontSize: 12,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite),
+            label: 'Tomar medición',
           ),
-        ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Perfil',
+          ),
+        ],
       ),
     );
   }
