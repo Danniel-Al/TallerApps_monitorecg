@@ -1,9 +1,10 @@
 // lib/screens/home_screen.dart
-// PANTALLA PRINCIPAL CON 2 PESTAÑAS (SIN HISTORIAL)
+// PANTALLA PRINCIPAL CON 3 PESTAÑAS (INCLUYE HISTORIAL)
 
 import 'package:flutter/material.dart';
 import 'measurement_screen.dart';
 import 'profile_screen.dart';
+import 'history_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final String username;
@@ -42,6 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
         symptoms: widget.symptoms,
         medications: widget.medications,
       ),
+      const HistoryScreen(),
       ProfileScreen(username: widget.username),
     ];
   }
@@ -67,7 +69,11 @@ class _HomeScreenState extends State<HomeScreen> {
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.favorite),
-            label: 'Tomar medición',
+            label: 'Medición',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.history),
+            label: 'Historial',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
