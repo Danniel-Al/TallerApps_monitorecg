@@ -1,5 +1,5 @@
 // lib/screens/result_screen.dart
-// VERSIÓN CORREGIDA - BOTÓN "IR AL INICIO" EN LUGAR DE "NUEVA MEDICIÓN"
+// SOLO GUARDA CUANDO EL USUARIO PRESIONA "GUARDAR Y SALIR"
 
 import 'package:flutter/material.dart';
 import '../services/recommendation_service.dart';
@@ -37,7 +37,6 @@ class ResultScreen extends StatefulWidget {
 class _ResultScreenState extends State<ResultScreen> {
   late String _recommendation;
   late DetailedComparison _comparison;
-  bool _isSaved = false;
 
   @override
   void initState() {
@@ -59,10 +58,7 @@ class _ResultScreenState extends State<ResultScreen> {
     );
   }
 
-  void _saveMeasurementOnce() {
-    if (_isSaved) return;
-    _isSaved = true;
-    
+  void _saveMeasurement() {
     final record = MeasurementRecord(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       dateTime: DateTime.now(),
@@ -80,7 +76,6 @@ class _ResultScreenState extends State<ResultScreen> {
   }
 
   void _goToRecommendation() {
-    _saveMeasurementOnce();
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -98,14 +93,6 @@ class _ResultScreenState extends State<ResultScreen> {
   }
 
   void _goToComparison() {
-    _saveMeasurementOnce();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('✅ Medición guardada en historial'),
-        backgroundColor: Colors.green,
-        duration: Duration(seconds: 2),
-      ),
-    );
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -119,8 +106,8 @@ class _ResultScreenState extends State<ResultScreen> {
     );
   }
 
-  void _goToHome() {
-    _saveMeasurementOnce();
+  void _saveAndGoHome() {
+    _saveMeasurement();
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('✅ Medición guardada en tu historial'),
@@ -128,6 +115,23 @@ class _ResultScreenState extends State<ResultScreen> {
         duration: Duration(seconds: 2),
       ),
     );
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HomeScreen(
+          username: widget.username,
+          ageRange: widget.ageRange,
+          gender: widget.gender,
+          conditions: widget.conditions,
+          symptoms: widget.symptoms,
+          medications: widget.medications,
+        ),
+      ),
+      (route) => false,
+    );
+  }
+
+  void _goToHomeWithoutSaving() {
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
@@ -256,7 +260,7 @@ class _ResultScreenState extends State<ResultScreen> {
               
               const SizedBox(height: 24),
               
-              // Botón: Ver recomendación completa
+              // Botón: Ver recomendación completa (NO guarda)
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -277,7 +281,7 @@ class _ResultScreenState extends State<ResultScreen> {
               ),
               const SizedBox(height: 12),
               
-              // Botón: Comparar con tu grupo de edad
+              // Botón: Comparar con tu grupo de edad (NO guarda)
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton.icon(
@@ -299,47 +303,39 @@ class _ResultScreenState extends State<ResultScreen> {
               ),
               const SizedBox(height: 16),
               
-              // Botón: Guardar y salir
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: _goToHome,
-                      icon: const Icon(Icons.save, color: Colors.green),
-                      label: const Text(
-                        'Guardar y salir',
-                        style: TextStyle(fontSize: 14, color: Colors.green),
-                      ),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.green,
-                        side: BorderSide(color: Colors.green.shade300),
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
+              // Botón: Guardar y salir (ÚNICO QUE GUARDA)
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: _saveAndGoHome,
+                  icon: const Icon(Icons.save),
+                  label: const Text(
+                    'Guardar y salir',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: _goToHome,
-                      icon: const Icon(Icons.home),
-                      label: const Text(
-                        'Ir al inicio',
-                        style: TextStyle(fontSize: 14),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red.shade100,
-                        foregroundColor: Colors.red,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
+              ),
+              const SizedBox(height: 8),
+              
+              // Botón: Salir sin guardar
+              TextButton.icon(
+                onPressed: _goToHomeWithoutSaving,
+                icon: const Icon(Icons.exit_to_app, size: 18),
+                label: const Text(
+                  'Salir sin guardar',
+                  style: TextStyle(fontSize: 14),
+                ),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.red.shade400,
+                ),
               ),
             ],
           ),
