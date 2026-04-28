@@ -1,89 +1,58 @@
-// lib/screens/recommendation_screen.dart
-// PANTALLA QUE MUESTRA LA RECOMENDACIÓN PERSONALIZADA
+// lib/services/recommendation_service.dart
+// SERVICIO PARA GENERAR RECOMENDACIONES
 
-import 'package:flutter/material.dart';
+class RecommendationService {
+  static String getRecommendation({
+    required int heartRate,
+    required int ageRange,
+    required int gender,
+    required int conditions,
+    required int symptoms,
+    required int medications,
+  }) {
+    String fcStatus = _getFCStatus(heartRate);
+    String recommendation = _buildBaseRecommendation(heartRate, fcStatus);
+    recommendation += _getConditionsWarning(conditions, symptoms, heartRate);
+    recommendation += _getFinalSuggestion(fcStatus, conditions, symptoms);
+    return recommendation;
+  }
 
-class RecommendationScreen extends StatelessWidget {
-  final int heartRate;
-  final String recommendation;
+  static String _getFCStatus(int heartRate) {
+    if (heartRate < 60) return 'baja';
+    if (heartRate > 100) return 'alta';
+    return 'normal';
+  }
 
-  const RecommendationScreen({
-    super.key,
-    required this.heartRate,
-    required this.recommendation,
-  });
+  static String _buildBaseRecommendation(int heartRate, String status) {
+    switch (status) {
+      case 'baja':
+        return '• Tu frecuencia cardíaca es de $heartRate lpm, lo cual está por debajo del rango normal (60-100 lpm).\n\n';
+      case 'alta':
+        return '• Tu frecuencia cardíaca es de $heartRate lpm, lo cual está por encima del rango normal (60-100 lpm).\n\n';
+      default:
+        return '• Tu frecuencia cardíaca es de $heartRate lpm, dentro del rango normal (60-100 lpm).\n\n';
+    }
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text('Recomendación', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.red,
-        elevation: 0,
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.red.shade50,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Column(
-                children: [
-                  const Icon(Icons.medical_information, size: 48, color: Colors.red),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Tu frecuencia cardíaca: $heartRate lpm',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade50,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.grey.shade200),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    '📋 Recomendación personalizada',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    recommendation,
-                    style: const TextStyle(fontSize: 15, height: 1.6),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                ),
-                child: const Text('Volver', style: TextStyle(fontSize: 16)),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+  static String _getConditionsWarning(int conditions, int symptoms, int heartRate) {
+    String warning = '';
+    if (conditions == 1) warning += '⚠️ Tienes hipertensión registrada. Mantén control periódico de tu presión arterial.\n\n';
+    else if (conditions == 2) warning += '⚠️ Tienes insuficiencia cardíaca. Consulta a tu médico si este valor se repite.\n\n';
+    else if (conditions == 3) warning += '⚠️ Antecedente de infarto. Es importante que realices controles cardiológicos regulares.\n\n';
+    else if (conditions == 4) warning += '⚠️ Tienes arritmias diagnosticadas. Si sientes palpitaciones frecuentes, consulta a tu médico.\n\n';
+    if (symptoms == 1 && heartRate > 90) warning += '💓 Reportaste palpitaciones. Con tu FC elevada, considera realizarte un electrocardiograma.\n\n';
+    else if (symptoms == 2) warning += '❗ Reportaste dolor en el pecho. No lo ignores. Consulta a un médico lo antes posible.\n\n';
+    else if (symptoms == 3 && heartRate < 60) warning += '😵 Reportaste mareos y tu FC es baja. Podrías tener bradicardia sintomática. Revisa con tu médico.\n\n';
+    return warning.isEmpty ? '✅ No se detectaron factores de riesgo adicionales.\n\n' : warning;
+  }
+
+  static String _getFinalSuggestion(String fcStatus, int conditions, int symptoms) {
+    if (fcStatus == 'normal' && conditions == 0 && symptoms == 0) {
+      return '📌 Recomendación: Mantén tu estilo de vida saludable. Realiza mediciones periódicas cada 15 días.';
+    } else if (fcStatus != 'normal') {
+      return '📌 Recomendación: Toma mediciones durante 3 días consecutivos. Si se mantiene alterada, consulta a un médico.';
+    } else {
+      return '📌 Recomendación: Continúa con tu seguimiento habitual. Ante cualquier síntoma nuevo, consulta a tu médico.';
+    }
   }
 }
