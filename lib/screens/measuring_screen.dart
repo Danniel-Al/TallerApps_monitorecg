@@ -71,10 +71,19 @@ class _MeasuringScreenState extends State<MeasuringScreen>
     int heartRate = (_heartBeats * 2).clamp(40, 180).toInt();
 
     if (mounted) {
+
+      // Dentro de _stopMeasurement, reemplazar Navigator.pushReplacement
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => ResultScreen(heartRate: heartRate),
+          builder: (_) => ResultScreen(
+            heartRate: heartRate,
+            ageRange: 2,        // TODO: Reemplazar con datos reales
+            gender: 0,          // TODO: Reemplazar con datos reales
+            conditions: 0,      // TODO: Reemplazar con datos reales
+            symptoms: 0,        // TODO: Reemplazar con datos reales
+            medications: 0,     // TODO: Reemplazar con datos reales
+          ),
         ),
       );
     }
