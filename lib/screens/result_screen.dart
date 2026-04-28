@@ -1,5 +1,5 @@
 // lib/screens/result_screen.dart
-// VERSIÓN CORREGIDA - GUARDA SOLO UNA VEZ AL INICIO
+// VERSIÓN CORREGIDA - BOTÓN "IR AL INICIO" EN LUGAR DE "NUEVA MEDICIÓN"
 
 import 'package:flutter/material.dart';
 import '../services/recommendation_service.dart';
@@ -42,7 +42,6 @@ class _ResultScreenState extends State<ResultScreen> {
   @override
   void initState() {
     super.initState();
-    // Generar recomendación y comparación UNA SOLA VEZ
     _recommendation = RecommendationService.getDetailedRecommendation(
       heartRate: widget.heartRate,
       ageRange: widget.ageRange,
@@ -61,7 +60,7 @@ class _ResultScreenState extends State<ResultScreen> {
   }
 
   void _saveMeasurementOnce() {
-    if (_isSaved) return; // Evita guardar múltiples veces
+    if (_isSaved) return;
     _isSaved = true;
     
     final record = MeasurementRecord(
@@ -81,7 +80,7 @@ class _ResultScreenState extends State<ResultScreen> {
   }
 
   void _goToRecommendation() {
-    _saveMeasurementOnce(); // Guarda solo si no se ha guardado antes
+    _saveMeasurementOnce();
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -99,7 +98,7 @@ class _ResultScreenState extends State<ResultScreen> {
   }
 
   void _goToComparison() {
-    _saveMeasurementOnce(); // Guarda solo si no se ha guardado antes
+    _saveMeasurementOnce();
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('✅ Medición guardada en historial'),
@@ -120,8 +119,8 @@ class _ResultScreenState extends State<ResultScreen> {
     );
   }
 
-  void _saveAndGoHome() {
-    _saveMeasurementOnce(); // Guarda solo si no se ha guardado antes
+  void _goToHome() {
+    _saveMeasurementOnce();
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('✅ Medición guardada en tu historial'),
@@ -257,6 +256,7 @@ class _ResultScreenState extends State<ResultScreen> {
               
               const SizedBox(height: 24),
               
+              // Botón: Ver recomendación completa
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -277,6 +277,7 @@ class _ResultScreenState extends State<ResultScreen> {
               ),
               const SizedBox(height: 12),
               
+              // Botón: Comparar con tu grupo de edad
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton.icon(
@@ -298,13 +299,47 @@ class _ResultScreenState extends State<ResultScreen> {
               ),
               const SizedBox(height: 16),
               
-              TextButton.icon(
-                onPressed: _saveAndGoHome,
-                icon: const Icon(Icons.save, color: Colors.green),
-                label: const Text(
-                  'Guardar medición y salir',
-                  style: TextStyle(fontSize: 14, color: Colors.green),
-                ),
+              // Botón: Guardar y salir
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: _goToHome,
+                      icon: const Icon(Icons.save, color: Colors.green),
+                      label: const Text(
+                        'Guardar y salir',
+                        style: TextStyle(fontSize: 14, color: Colors.green),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.green,
+                        side: BorderSide(color: Colors.green.shade300),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: _goToHome,
+                      icon: const Icon(Icons.home),
+                      label: const Text(
+                        'Ir al inicio',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red.shade100,
+                        foregroundColor: Colors.red,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
