@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 //Importa pantalla de registro para poder ir hacía ella
 import 'register_screen.dart';
+//Importar pantalla de datos de usuario
+import 'demographic_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -24,8 +26,21 @@ class _LoginScreenState extends State<LoginScreen> {
       _showError('Por favor ingresa usuario y contraseña');
       //Despues, aquí senavegará a la pantalla principal
     } else {
-      // Por ahora solo muestra un mensaje de éxito
+      // TODO: Aquí después se verificará si ya llenó datos demográficos
+      // Por ahora, siempre va a datos demográficos (primera vez)
       _showSuccess('Bienvenido $username');
+      
+      // Pequeña pausa para ver el mensaje, luego navega
+      Future.delayed(const Duration(seconds: 1), () {
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => DemographicScreen(username: username),
+            ),
+          );
+        }
+      });
     }
   }
 
