@@ -1,9 +1,11 @@
-//Punto de entrada principal de la app
+// lib/main.dart
+// PUNTO DE ENTRADA PRINCIPAL DE LA APLICACIÓN
+
 import 'package:flutter/material.dart';
 import 'screens/login_screen.dart';
 
 void main() {
-  runApp(const MyApp()); // Iniciar la aplicación
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -12,13 +14,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Monitor ECG', //Título de la app
-      debugShowCheckedModeBanner: false, //Se oculta etiqueta "Debug"
+      title: 'Monitor ECG',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.red, //Color principal rojo
+        primarySwatch: Colors.red,
         useMaterial3: true,
+        fontFamily: 'Roboto',
       ),
-      home: const LoginScreen(), //Pantalla que se muestra al abrir la app
+      home: const LoginScreen(),
     );
   }
 }

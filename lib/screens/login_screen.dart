@@ -1,8 +1,8 @@
-//Pantalla de inicio de sesión
+// lib/screens/login_screen.dart
+// PANTALLA DE INICIO DE SESIÓN
+
 import 'package:flutter/material.dart';
-//Importa pantalla de registro para poder ir hacía ella
 import 'register_screen.dart';
-//Importar pantalla de datos de usuario
 import 'demographic_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -13,24 +13,17 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  //Controladores para leer el texto de los campos
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   void _handleLogin() {
-    //Función que se inicia al presionar el botón de iniciar sesión
-    final username = _usernameController.text.trim(); //Elimina espacios al inicio y al final
+    final username = _usernameController.text.trim();
     final password = _passwordController.text;
 
-    if (username.isEmpty || password.isEmpty) { //Validar si ambos campos tiene contenido
+    if (username.isEmpty || password.isEmpty) {
       _showError('Por favor ingresa usuario y contraseña');
-      //Despues, aquí senavegará a la pantalla principal
     } else {
-      // TODO: Aquí después se verificará si ya llenó datos demográficos
-      // Por ahora, siempre va a datos demográficos (primera vez)
       _showSuccess('Bienvenido $username');
-      
-      // Pequeña pausa para ver el mensaje, luego navega
       Future.delayed(const Duration(seconds: 1), () {
         if (mounted) {
           Navigator.pushReplacement(
@@ -45,14 +38,12 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _showError(String message) {
-    //Muestra mensjae de error en rojo
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message), backgroundColor: Colors.red),
     );
   }
 
   void _showSuccess(String message) {
-    //Muestra mensaje de éxito en verde
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message), backgroundColor: Colors.green),
     );
@@ -61,52 +52,86 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Padding(
-        padding: const EdgeInsets.all(24.0), //margen interior 
+        padding: const EdgeInsets.all(24.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center, //centra verticalmente 
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.favorite, size: 80, color: Colors.red), //icono de corazón rojo
+            // Icono principal
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.red.shade50,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.favorite, size: 60, color: Colors.red),
+            ),
             const SizedBox(height: 20),
-            const Text('Monitor ECG', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)), //Título de la app
+            const Text(
+              'Monitor ECG',
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.red),
+            ),
             const SizedBox(height: 40),
-            TextField( //Campo de texto para ingresar el usuario
+            // Campo usuario
+            TextField(
               controller: _usernameController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Nombre de usuario',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.person),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                prefixIcon: const Icon(Icons.person),
+                filled: true,
+                fillColor: Colors.grey.shade50,
               ),
             ),
             const SizedBox(height: 16),
-            TextField( //Campo de texto para ingresar la contraseña
+            // Campo contraseña
+            TextField(
               controller: _passwordController,
-              obscureText: true, //Los caracteres se ven como puntos
-              decoration: const InputDecoration(
+              obscureText: true,
+              decoration: InputDecoration(
                 labelText: 'Contraseña',
-                border: OutlineInputBorder(), 
-                prefixIcon: Icon(Icons.lock),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                prefixIcon: const Icon(Icons.lock),
+                filled: true,
+                fillColor: Colors.grey.shade50,
               ),
             ),
             const SizedBox(height: 24),
-            ElevatedButton( //Botón de inicio de sesión
-              onPressed: _handleLogin,
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 50), //Ancho completo
-                backgroundColor: Colors.red,
+            // Botón iniciar sesión
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _handleLogin,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.red,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    side: BorderSide(color: Colors.red.shade300, width: 1.5),
+                  ),
+                  elevation: 2,
+                ),
+                child: const Text(
+                  'Iniciar sesión',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
               ),
-              child: const Text('Iniciar sesión', style: TextStyle(fontSize: 16)),
             ),
             const SizedBox(height: 16),
-              // Botón para ir al registro (AHORA SÍ FUNCIONA)
+            // Botón ir a registro
             TextButton(
               onPressed: () {
-                Navigator.push( //Moverse a nueva pantalla 
+                Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const RegisterScreen()),
                 );
               },
-              child: const Text('¿No tienes cuenta? Regístrate'),
+              child: Text(
+                '¿No tienes cuenta? Regístrate',
+                style: TextStyle(color: Colors.red.shade700),
+              ),
             ),
           ],
         ),
