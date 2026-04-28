@@ -84,6 +84,7 @@ class ResultScreen extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
+                  // Usar el servicio de recomendación
                   final recommendation = RecommendationService.getRecommendation(
                     heartRate: heartRate,
                     ageRange: ageRange,
@@ -92,10 +93,11 @@ class ResultScreen extends StatelessWidget {
                     symptoms: symptoms,
                     medications: medications,
                   );
+                  // Navegar a la pantalla de recomendación
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => RecommendationScreen(
+                      builder: (context) => RecommendationScreen(
                         heartRate: heartRate,
                         recommendation: recommendation,
                       ),
@@ -124,7 +126,7 @@ class ResultScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => ComparisonScreen(comparison: comparison),
+                      builder: (context) => ComparisonScreen(comparison: comparison),
                     ),
                   );
                 },
