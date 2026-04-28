@@ -1,5 +1,6 @@
 //Pantalla de inicio de sesión
 import 'package:flutter/material.dart';
+//Importa pantalla de registro para poder ir hacía ella
 import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -85,7 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
               // Botón para ir al registro (AHORA SÍ FUNCIONA)
             TextButton(
               onPressed: () {
-                Navigator.push(
+                Navigator.push( //Moverse a nueva pantalla 
                   context,
                   MaterialPageRoute(builder: (_) => const RegisterScreen()),
                 );

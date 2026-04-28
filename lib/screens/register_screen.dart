@@ -18,7 +18,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   // Función que se ejecuta al presionar "Registrarse"
   void _handleRegister() {
-    final username = _usernameController.text.trim();
+    final username = _usernameController.text.trim(); //Elimina espacios en blanco al inicio y al final
     final password = _passwordController.text;
     final confirm = _confirmController.text;
 
@@ -36,19 +36,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _showSuccess('Registro exitoso. Ahora inicia sesión.');
       
       // Regresar a la pantalla de login después de 2 segundos
-      Future.delayed(const Duration(seconds: 2), () {
+      Future.delayed(const Duration(seconds: 2), () { //Hay un delay antes de que se ejecute
         Navigator.pop(context);  // Vuelve a la pantalla anterior (login)
       });
     }
   }
 
-  void _showError(String message) {
+  void _showError(String message) { //Muestra mensaje de error
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message), backgroundColor: Colors.red),
     );
   }
 
-  void _showSuccess(String message) {
+  void _showSuccess(String message) { //Muestra mensaje de éxito
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message), backgroundColor: Colors.green),
     );
@@ -69,7 +69,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Icono de persona (cambiado de corazón roto)
+            // Icono de persona 
             const Icon(Icons.person_add, size: 60, color: Colors.red),
             const SizedBox(height: 20),
             
@@ -77,7 +77,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             const Text('Crea tu cuenta', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             const SizedBox(height: 40),
 
-            // Campo: Nombre de usuario
+            // Campo de Nombre de usuario
             TextField(
               controller: _usernameController,
               decoration: const InputDecoration(
@@ -88,10 +88,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
             const SizedBox(height: 16),
 
-            // Campo: Contraseña
+            // Campo de Contraseña
             TextField(
               controller: _passwordController,
-              obscureText: true,
+              obscureText: true, //Muestra puntos
               decoration: const InputDecoration(
                 labelText: 'Contraseña',
                 border: OutlineInputBorder(),
@@ -103,7 +103,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             // Campo: Confirmar contraseña
             TextField(
               controller: _confirmController,
-              obscureText: true,
+              obscureText: true, //también oculto al texto
               decoration: const InputDecoration(
                 labelText: 'Confirmar contraseña',
                 border: OutlineInputBorder(),
