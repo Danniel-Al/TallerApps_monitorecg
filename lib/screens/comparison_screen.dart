@@ -45,7 +45,6 @@ class ComparisonScreen extends StatelessWidget {
           padding: EdgeInsets.all(isSmallScreen ? 20 : 30),
           child: Column(
             children: [
-              // Tarjeta principal
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(24),
@@ -89,8 +88,6 @@ class ComparisonScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
-
-              // Rango por edad
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -111,66 +108,10 @@ class ComparisonScreen extends StatelessWidget {
                     _buildInfoRow('Rango normal esperado', '${comparison.minNormal} - ${comparison.maxNormal} lpm'),
                     _buildInfoRow('Rango ideal', '${comparison.idealMin} - ${comparison.idealMax} lpm'),
                     _buildInfoRow('Tu posición', comparison.percentile),
-                    const SizedBox(height: 16),
-                    
-                    // Barra de rango visual
-                    Column(
-                      children: [
-                        const Text('Ubicación en el rango:', style: TextStyle(fontSize: 12, color: Colors.black54)),
-                        const SizedBox(height: 8),
-                        Container(
-                          height: 30,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: Colors.grey.shade300,
-                          ),
-                          child: Stack(
-                            children: [
-                              // Rango normal
-                              Container(
-                                margin: EdgeInsets.symmetric(
-                                  horizontal: (comparison.minNormal / 100) * MediaQuery.of(context).size.width,
-                                ),
-                                width: ((comparison.maxNormal - comparison.minNormal) / 100) * MediaQuery.of(context).size.width,
-                                decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
-                                    colors: [Colors.green, Colors.green],
-                                  ),
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                              ),
-                              // Marcador del usuario
-                              Positioned(
-                                left: (comparison.heartRate.clamp(0, 100) / 100) * MediaQuery.of(context).size.width - 15,
-                                child: Column(
-                                  children: [
-                                    const Icon(Icons.arrow_drop_down, color: Colors.red, size: 24),
-                                    const Text('TÚ', style: TextStyle(fontSize: 10, color: Colors.red, fontWeight: FontWeight.bold)),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('0', style: TextStyle(fontSize: 10, color: Colors.grey.shade600)),
-                            Text('${comparison.minNormal}', style: TextStyle(fontSize: 10, color: Colors.green.shade600)),
-                            Text('${comparison.maxNormal}', style: TextStyle(fontSize: 10, color: Colors.green.shade600)),
-                            Text('100', style: TextStyle(fontSize: 10, color: Colors.grey.shade600)),
-                          ],
-                        ),
-                      ],
-                    ),
                   ],
                 ),
               ),
               const SizedBox(height: 24),
-
-              // Recomendación detallada
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -200,8 +141,6 @@ class ComparisonScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
-
-              // Nota aclaratoria
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
@@ -222,8 +161,6 @@ class ComparisonScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
-
-              // Botones
               Row(
                 children: [
                   Expanded(

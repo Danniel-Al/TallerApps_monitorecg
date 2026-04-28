@@ -97,6 +97,11 @@ class MeasurementDetailScreen extends StatelessWidget {
                           builder: (_) => RecommendationScreen(
                             heartRate: record.heartRate,
                             recommendation: record.recommendation,
+                            ageRange: record.ageRange,
+                            gender: record.gender,
+                            conditions: record.conditions,
+                            symptoms: record.symptoms,
+                            medications: record.medications,
                           ),
                         ),
                       );
@@ -114,15 +119,22 @@ class MeasurementDetailScreen extends StatelessWidget {
                 Expanded(
                   child: OutlinedButton.icon(
                     onPressed: () {
-                      final comparison = ComparisonService.compare(
+                      final comparison = ComparisonService.getDetailedComparison(
                         heartRate: record.heartRate,
                         ageRange: record.ageRange,
                         gender: record.gender,
+                        conditions: record.conditions,
+                        symptoms: record.symptoms,
                       );
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => ComparisonScreen(comparison: comparison),
+                          builder: (_) => ComparisonScreen(
+                            comparison: comparison,
+                            heartRate: record.heartRate,
+                            ageRange: record.ageRange,
+                            gender: record.gender,
+                          ),
                         ),
                       );
                     },
