@@ -40,9 +40,11 @@ class _DemographicScreenState extends State<DemographicScreen> {
 
     if (mounted) {
       setState(() => _isLoading = false);
-      Navigator.pushReplacement(
+            Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        MaterialPageRoute(
+          builder: (_) => HomeScreen(username: widget.username),  // ← PASA USERNAME
+        ),
       );
     }
   }
@@ -79,7 +81,7 @@ class _DemographicScreenState extends State<DemographicScreen> {
             ),
             const SizedBox(height: 8),
             DropdownButtonFormField<int>(
-              value: value,
+              initialValue: value,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
