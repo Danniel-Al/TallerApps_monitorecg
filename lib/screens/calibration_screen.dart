@@ -5,14 +5,28 @@ import 'package:flutter/material.dart';
 import 'measuring_screen.dart';
 
 class CalibrationScreen extends StatefulWidget {
-  const CalibrationScreen({super.key});
+  // Recibir datos demográficos
+  final int ageRange;
+  final int gender;
+  final int conditions;
+  final int symptoms;
+  final int medications;
+
+  const CalibrationScreen({
+    super.key,
+    required this.ageRange,
+    required this.gender,
+    required this.conditions,
+    required this.symptoms,
+    required this.medications,
+  });
 
   @override
   State<CalibrationScreen> createState() => _CalibrationScreenState();
 }
 
 class _CalibrationScreenState extends State<CalibrationScreen> {
-  int _countdown = 3;  // Contador regresivo de 3 segundos
+  int _countdown = 3;
   bool _isCounting = false;
 
   @override
@@ -26,7 +40,6 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
       _isCounting = true;
     });
 
-    // Cuenta regresiva: 3, 2, 1
     for (int i = 3; i >= 0; i--) {
       setState(() {
         _countdown = i;
@@ -34,11 +47,18 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
       await Future.delayed(const Duration(seconds: 1));
     }
 
-    // Termina calibración, navega a medición
     if (mounted) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const MeasuringScreen()),
+        MaterialPageRoute(
+          builder: (_) => MeasuringScreen(
+            ageRange: widget.ageRange,
+            gender: widget.gender,
+            conditions: widget.conditions,
+            symptoms: widget.symptoms,
+            medications: widget.medications,
+          ),
+        ),
       );
     }
   }
@@ -52,7 +72,6 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Instrucción principal
             const Text(
               'Prepárate para la medición',
               style: TextStyle(
@@ -63,8 +82,6 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
-
-            // Consejos
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -87,8 +104,6 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
               ),
             ),
             const SizedBox(height: 48),
-
-            // Contador o mensaje de preparación
             if (_countdown > 0)
               Text(
                 '$_countdown',

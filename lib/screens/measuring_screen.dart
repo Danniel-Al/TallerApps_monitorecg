@@ -1,13 +1,27 @@
 // lib/screens/measuring_screen.dart
 // PANTALLA DE MEDICIÓN ACTIVA (SIMULACIÓN DE LATIDOS)
-// CORREGIDO: Corazón centrado vertical y horizontalmente
+// AL TERMINAR, PASA LOS DATOS DEMOGRÁFICOS A RESULTSCREEN
 
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'result_screen.dart';
 
 class MeasuringScreen extends StatefulWidget {
-  const MeasuringScreen({super.key});
+  // Datos demográficos del usuario (recibidos desde la pantalla anterior)
+  final int ageRange;
+  final int gender;
+  final int conditions;
+  final int symptoms;
+  final int medications;
+
+  const MeasuringScreen({
+    super.key,
+    required this.ageRange,
+    required this.gender,
+    required this.conditions,
+    required this.symptoms,
+    required this.medications,
+  });
 
   @override
   State<MeasuringScreen> createState() => _MeasuringScreenState();
@@ -71,18 +85,17 @@ class _MeasuringScreenState extends State<MeasuringScreen>
     int heartRate = (_heartBeats * 2).clamp(40, 180).toInt();
 
     if (mounted) {
-
-      // Dentro de _stopMeasurement, reemplazar Navigator.pushReplacement
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (_) => ResultScreen(
             heartRate: heartRate,
-            ageRange: 2,        // TODO: Reemplazar con datos reales
-            gender: 0,          // TODO: Reemplazar con datos reales
-            conditions: 0,      // TODO: Reemplazar con datos reales
-            symptoms: 0,        // TODO: Reemplazar con datos reales
-            medications: 0,     // TODO: Reemplazar con datos reales
+            // Pasar los datos demográficos recibidos
+            ageRange: widget.ageRange,
+            gender: widget.gender,
+            conditions: widget.conditions,
+            symptoms: widget.symptoms,
+            medications: widget.medications,
           ),
         ),
       );
