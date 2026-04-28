@@ -1,10 +1,9 @@
 // lib/screens/home_screen.dart
-// PANTALLA PRINCIPAL CON 3 PESTAÑAS
+// PANTALLA PRINCIPAL CON 2 PESTAÑAS (SIN HISTORIAL)
 
 import 'package:flutter/material.dart';
 import 'measurement_screen.dart';
 import 'profile_screen.dart';
-import 'history_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final String username;
@@ -43,12 +42,15 @@ class _HomeScreenState extends State<HomeScreen> {
         symptoms: widget.symptoms,
         medications: widget.medications,
       ),
-      const HistoryScreen(),
       ProfileScreen(username: widget.username),
     ];
   }
 
-  void _onItemTapped(int index) => setState(() => _selectedIndex = index);
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,10 +62,17 @@ class _HomeScreenState extends State<HomeScreen> {
         onTap: _onItemTapped,
         selectedItemColor: Colors.red,
         unselectedItemColor: Colors.grey,
+        selectedFontSize: 12,
+        unselectedFontSize: 12,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Medición'),
-          BottomNavigationBarItem(icon: Icon(Icons.history), label: 'Historial'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite),
+            label: 'Tomar medición',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Perfil',
+          ),
         ],
       ),
     );

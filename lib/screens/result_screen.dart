@@ -1,12 +1,9 @@
 // lib/screens/result_screen.dart
-// PANTALLA DE RESULTADOS
+// PANTALLA DE RESULTADOS - VERSIÓN CORREGIDA
 
-import 'dart:math';
 import 'package:flutter/material.dart';
 import '../services/recommendation_service.dart';
 import '../services/comparison_service.dart';
-import '../services/history_service.dart';
-import '../models/measurement_record.dart';
 import 'recommendation_screen.dart';
 import 'comparison_screen.dart';
 
@@ -27,23 +24,6 @@ class ResultScreen extends StatelessWidget {
     required this.symptoms,
     required this.medications,
   });
-
-  void _saveMeasurement(String recommendation, ComparisonResult comparison) async {
-    final record = MeasurementRecord(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      dateTime: DateTime.now(),
-      heartRate: heartRate,
-      ageRange: ageRange,
-      gender: gender,
-      conditions: conditions,
-      symptoms: symptoms,
-      medications: medications,
-      recommendation: recommendation,
-      comparisonStatus: comparison.status,
-      comparisonText: '${comparison.status} - ${comparison.percentile}',
-    );
-    await HistoryService.saveMeasurement(record);
-  }
 
   String _getStatusText() {
     if (heartRate < 60) return 'Bradicardia (Ritmo lento)';
@@ -75,17 +55,29 @@ class ResultScreen extends StatelessWidget {
           children: [
             Container(
               padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(color: _getStatusColor().withOpacity(0.1), shape: BoxShape.circle),
+              decoration: BoxDecoration(
+                color: _getStatusColor().withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
               child: Icon(Icons.favorite, size: 64, color: _getStatusColor()),
             ),
             const SizedBox(height: 24),
-            Text('$heartRate', style: const TextStyle(fontSize: 64, fontWeight: FontWeight.bold, color: Colors.red)),
+            Text(
+              '$heartRate',
+              style: const TextStyle(fontSize: 64, fontWeight: FontWeight.bold, color: Colors.red),
+            ),
             const Text('latidos por minuto', style: TextStyle(fontSize: 16, color: Colors.black54)),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              decoration: BoxDecoration(color: _getStatusColor().withOpacity(0.1), borderRadius: BorderRadius.circular(30)),
-              child: Text(_getStatusText(), style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: _getStatusColor())),
+              decoration: BoxDecoration(
+                color: _getStatusColor().withOpacity(0.1),
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: Text(
+                _getStatusText(),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: _getStatusColor()),
+              ),
             ),
             const SizedBox(height: 48),
             SizedBox(
@@ -100,12 +92,6 @@ class ResultScreen extends StatelessWidget {
                     symptoms: symptoms,
                     medications: medications,
                   );
-                  final comparison = ComparisonService.compare(
-                    heartRate: heartRate,
-                    ageRange: ageRange,
-                    gender: gender,
-                  );
-                  _saveMeasurement(recommendation, comparison);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -135,15 +121,6 @@ class ResultScreen extends StatelessWidget {
                     ageRange: ageRange,
                     gender: gender,
                   );
-                  final recommendation = RecommendationService.getRecommendation(
-                    heartRate: heartRate,
-                    ageRange: ageRange,
-                    gender: gender,
-                    conditions: conditions,
-                    symptoms: symptoms,
-                    medications: medications,
-                  );
-                  _saveMeasurement(recommendation, comparison);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
