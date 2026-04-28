@@ -1,5 +1,5 @@
 // lib/screens/home_screen.dart
-// PANTALLA PRINCIPAL CON 3 PESTAÑAS (INCLUYE HISTORIAL)
+// PANTALLA PRINCIPAL CON 3 PESTAÑAS
 
 import 'package:flutter/material.dart';
 import 'measurement_screen.dart';
@@ -42,6 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
         conditions: widget.conditions,
         symptoms: widget.symptoms,
         medications: widget.medications,
+        username: widget.username,
       ),
       const HistoryScreen(),
       ProfileScreen(username: widget.username),

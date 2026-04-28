@@ -1,5 +1,5 @@
 // lib/screens/result_screen.dart
-// VERSIÓN OPTIMIZADA PARA MÓVIL CON BOTONES MEJORADOS
+// PANTALLA DE RESULTADOS - VERSIÓN COMPLETA CORREGIDA
 
 import 'package:flutter/material.dart';
 import '../services/recommendation_service.dart';
@@ -30,7 +30,7 @@ class ResultScreen extends StatelessWidget {
     required this.username,
   });
 
-  void _saveMeasurement(String recommendation, ComparisonResult comparison) {
+  void _saveMeasurement(String recommendation, DetailedComparison comparison) {
     final record = MeasurementRecord(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       dateTime: DateTime.now(),
@@ -47,7 +47,7 @@ class ResultScreen extends StatelessWidget {
     MemoryHistoryService.saveMeasurement(record);
   }
 
-  void _saveAndGoHome(BuildContext context, String recommendation, ComparisonResult comparison) {
+  void _saveAndGoHome(BuildContext context, String recommendation, DetailedComparison comparison) {
     _saveMeasurement(recommendation, comparison);
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -56,7 +56,6 @@ class ResultScreen extends StatelessWidget {
         duration: Duration(seconds: 2),
       ),
     );
-    // Regresar al home (pantalla principal con pestañas)
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
@@ -97,7 +96,6 @@ class ResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Tamaños adaptados para móvil
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600;
 
@@ -117,7 +115,6 @@ class ResultScreen extends StatelessWidget {
             children: [
               const SizedBox(height: 20),
               
-              // Icono de resultado
               Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
@@ -132,7 +129,6 @@ class ResultScreen extends StatelessWidget {
               ),
               const SizedBox(height: 24),
               
-              // Valor de FC
               Text(
                 '$heartRate',
                 style: TextStyle(
@@ -147,7 +143,6 @@ class ResultScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               
-              // Estado
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                 decoration: BoxDecoration(
@@ -165,7 +160,6 @@ class ResultScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               
-              // Resumen rápido
               Container(
                 padding: const EdgeInsets.all(16),
                 margin: const EdgeInsets.symmetric(vertical: 16),
@@ -190,7 +184,6 @@ class ResultScreen extends StatelessWidget {
               
               const SizedBox(height: 24),
               
-              // Botón: Ver recomendación completa
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -203,10 +196,12 @@ class ResultScreen extends StatelessWidget {
                       symptoms: symptoms,
                       medications: medications,
                     );
-                    final comparison = ComparisonService.compare(
+                    final comparison = ComparisonService.getDetailedComparison(
                       heartRate: heartRate,
                       ageRange: ageRange,
                       gender: gender,
+                      conditions: conditions,
+                      symptoms: symptoms,
                     );
                     _saveMeasurement(recommendation, comparison);
                     Navigator.push(
@@ -240,7 +235,6 @@ class ResultScreen extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               
-              // Botón: Comparar con tu grupo de edad
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton.icon(
@@ -260,7 +254,7 @@ class ResultScreen extends StatelessWidget {
                       symptoms: symptoms,
                       medications: medications,
                     );
-                    _saveMeasurement(recommendation, comparison.recommendation);
+                    _saveMeasurement(recommendation, comparison);
                     
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
@@ -299,7 +293,6 @@ class ResultScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               
-              // Botón: Guardar y salir (nuevo)
               TextButton.icon(
                 onPressed: () {
                   final recommendation = RecommendationService.getDetailedRecommendation(
@@ -310,10 +303,12 @@ class ResultScreen extends StatelessWidget {
                     symptoms: symptoms,
                     medications: medications,
                   );
-                  final comparison = ComparisonService.compare(
+                  final comparison = ComparisonService.getDetailedComparison(
                     heartRate: heartRate,
                     ageRange: ageRange,
                     gender: gender,
+                    conditions: conditions,
+                    symptoms: symptoms,
                   );
                   _saveAndGoHome(context, recommendation, comparison);
                 },
