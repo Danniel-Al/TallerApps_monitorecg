@@ -1,27 +1,33 @@
 // lib/screens/home_screen.dart
 // PANTALLA PRINCIPAL CON PESTAÑAS (BOTTOM NAVIGATION BAR)
-// Pestaña 1: Tomar medición
-// Pestaña 2: Perfil
 
 import 'package:flutter/material.dart';
 import 'measurement_screen.dart';
 import 'profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final String username;  // Recibe el username del usuario
+
+  const HomeScreen({super.key, required this.username});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;  // 0: Medición, 1: Perfil
+  int _selectedIndex = 0;
 
   // Lista de pantallas para cada pestaña
-  final List<Widget> _screens = [
-    const MeasurementScreen(),   // Pestaña de medición
-    const ProfileScreen(),       // Pestaña de perfil (la crearemos después)
-  ];
+  late final List<Widget> _screens;
+
+  @override
+  void initState() {
+    super.initState();
+    _screens = [
+      const MeasurementScreen(),                    // Pestaña de medición
+      ProfileScreen(username: widget.username),    // Pestaña de perfil (recibe username)
+    ];
+  }
 
   void _onItemTapped(int index) {
     setState(() {
