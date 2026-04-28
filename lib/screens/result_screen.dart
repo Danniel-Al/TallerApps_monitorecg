@@ -1,5 +1,5 @@
 // lib/screens/result_screen.dart
-// PANTALLA DE RESULTADOS - VERSIÓN COMPLETA CORREGIDA
+// VERSIÓN CORREGIDA - GUARDA SOLO UNA VEZ AL INICIO
 
 import 'package:flutter/material.dart';
 import '../services/recommendation_service.dart';
@@ -10,7 +10,7 @@ import 'recommendation_screen.dart';
 import 'comparison_screen.dart';
 import 'home_screen.dart';
 
-class ResultScreen extends StatelessWidget {
+class ResultScreen extends StatefulWidget {
   final int heartRate;
   final int ageRange;
   final int gender;
@@ -30,25 +30,98 @@ class ResultScreen extends StatelessWidget {
     required this.username,
   });
 
-  void _saveMeasurement(String recommendation, DetailedComparison comparison) {
+  @override
+  State<ResultScreen> createState() => _ResultScreenState();
+}
+
+class _ResultScreenState extends State<ResultScreen> {
+  late String _recommendation;
+  late DetailedComparison _comparison;
+  bool _isSaved = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Generar recomendación y comparación UNA SOLA VEZ
+    _recommendation = RecommendationService.getDetailedRecommendation(
+      heartRate: widget.heartRate,
+      ageRange: widget.ageRange,
+      gender: widget.gender,
+      conditions: widget.conditions,
+      symptoms: widget.symptoms,
+      medications: widget.medications,
+    );
+    _comparison = ComparisonService.getDetailedComparison(
+      heartRate: widget.heartRate,
+      ageRange: widget.ageRange,
+      gender: widget.gender,
+      conditions: widget.conditions,
+      symptoms: widget.symptoms,
+    );
+  }
+
+  void _saveMeasurementOnce() {
+    if (_isSaved) return; // Evita guardar múltiples veces
+    _isSaved = true;
+    
     final record = MeasurementRecord(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       dateTime: DateTime.now(),
-      heartRate: heartRate,
-      ageRange: ageRange,
-      gender: gender,
-      conditions: conditions,
-      symptoms: symptoms,
-      medications: medications,
-      recommendation: recommendation,
-      comparisonStatus: comparison.status,
-      comparisonText: '${comparison.status} - ${comparison.percentile}',
+      heartRate: widget.heartRate,
+      ageRange: widget.ageRange,
+      gender: widget.gender,
+      conditions: widget.conditions,
+      symptoms: widget.symptoms,
+      medications: widget.medications,
+      recommendation: _recommendation,
+      comparisonStatus: _comparison.status,
+      comparisonText: '${_comparison.status} - ${_comparison.percentile}',
     );
     MemoryHistoryService.saveMeasurement(record);
   }
 
-  void _saveAndGoHome(BuildContext context, String recommendation, DetailedComparison comparison) {
-    _saveMeasurement(recommendation, comparison);
+  void _goToRecommendation() {
+    _saveMeasurementOnce(); // Guarda solo si no se ha guardado antes
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RecommendationScreen(
+          heartRate: widget.heartRate,
+          recommendation: _recommendation,
+          ageRange: widget.ageRange,
+          gender: widget.gender,
+          conditions: widget.conditions,
+          symptoms: widget.symptoms,
+          medications: widget.medications,
+        ),
+      ),
+    );
+  }
+
+  void _goToComparison() {
+    _saveMeasurementOnce(); // Guarda solo si no se ha guardado antes
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('✅ Medición guardada en historial'),
+        backgroundColor: Colors.green,
+        duration: Duration(seconds: 2),
+      ),
+    );
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ComparisonScreen(
+          comparison: _comparison,
+          heartRate: widget.heartRate,
+          ageRange: widget.ageRange,
+          gender: widget.gender,
+        ),
+      ),
+    );
+  }
+
+  void _saveAndGoHome() {
+    _saveMeasurementOnce(); // Guarda solo si no se ha guardado antes
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('✅ Medición guardada en tu historial'),
@@ -60,12 +133,12 @@ class ResultScreen extends StatelessWidget {
       context,
       MaterialPageRoute(
         builder: (context) => HomeScreen(
-          username: username,
-          ageRange: ageRange,
-          gender: gender,
-          conditions: conditions,
-          symptoms: symptoms,
-          medications: medications,
+          username: widget.username,
+          ageRange: widget.ageRange,
+          gender: widget.gender,
+          conditions: widget.conditions,
+          symptoms: widget.symptoms,
+          medications: widget.medications,
         ),
       ),
       (route) => false,
@@ -73,21 +146,21 @@ class ResultScreen extends StatelessWidget {
   }
 
   String _getStatusText() {
-    if (heartRate < 60) return 'Bradicardia (Ritmo lento)';
-    if (heartRate > 100) return 'Taquicardia (Ritmo rápido)';
+    if (widget.heartRate < 60) return 'Bradicardia (Ritmo lento)';
+    if (widget.heartRate > 100) return 'Taquicardia (Ritmo rápido)';
     return 'Normal (Ritmo saludable)';
   }
 
   Color _getStatusColor() {
-    if (heartRate < 60) return Colors.orange;
-    if (heartRate > 100) return Colors.red;
+    if (widget.heartRate < 60) return Colors.orange;
+    if (widget.heartRate > 100) return Colors.red;
     return Colors.green;
   }
 
   String _getRecommendationSummary() {
-    if (heartRate < 60) {
+    if (widget.heartRate < 60) {
       return 'Tu corazón late más lento de lo habitual. Puede ser normal si eres deportista, pero si tienes mareos o fatiga, consulta a tu médico.';
-    } else if (heartRate > 100) {
+    } else if (widget.heartRate > 100) {
       return 'Tu corazón late más rápido de lo habitual. Esto puede deberse a estrés, cafeína o deshidratación. Si persiste, busca atención médica.';
     } else {
       return '¡Excelente! Tu frecuencia cardíaca está dentro del rango saludable. Mantén tus buenos hábitos.';
@@ -130,7 +203,7 @@ class ResultScreen extends StatelessWidget {
               const SizedBox(height: 24),
               
               Text(
-                '$heartRate',
+                '${widget.heartRate}',
                 style: TextStyle(
                   fontSize: isSmallScreen ? 56 : 72,
                   fontWeight: FontWeight.bold,
@@ -187,38 +260,7 @@ class ResultScreen extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
-                    final recommendation = RecommendationService.getDetailedRecommendation(
-                      heartRate: heartRate,
-                      ageRange: ageRange,
-                      gender: gender,
-                      conditions: conditions,
-                      symptoms: symptoms,
-                      medications: medications,
-                    );
-                    final comparison = ComparisonService.getDetailedComparison(
-                      heartRate: heartRate,
-                      ageRange: ageRange,
-                      gender: gender,
-                      conditions: conditions,
-                      symptoms: symptoms,
-                    );
-                    _saveMeasurement(recommendation, comparison);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => RecommendationScreen(
-                          heartRate: heartRate,
-                          recommendation: recommendation,
-                          ageRange: ageRange,
-                          gender: gender,
-                          conditions: conditions,
-                          symptoms: symptoms,
-                          medications: medications,
-                        ),
-                      ),
-                    );
-                  },
+                  onPressed: _goToRecommendation,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                     foregroundColor: Colors.white,
@@ -238,44 +280,7 @@ class ResultScreen extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton.icon(
-                  onPressed: () {
-                    final comparison = ComparisonService.getDetailedComparison(
-                      heartRate: heartRate,
-                      ageRange: ageRange,
-                      gender: gender,
-                      conditions: conditions,
-                      symptoms: symptoms,
-                    );
-                    final recommendation = RecommendationService.getDetailedRecommendation(
-                      heartRate: heartRate,
-                      ageRange: ageRange,
-                      gender: gender,
-                      conditions: conditions,
-                      symptoms: symptoms,
-                      medications: medications,
-                    );
-                    _saveMeasurement(recommendation, comparison);
-                    
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('✅ Medición guardada en historial'),
-                        backgroundColor: Colors.green,
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-                    
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ComparisonScreen(
-                          comparison: comparison,
-                          heartRate: heartRate,
-                          ageRange: ageRange,
-                          gender: gender,
-                        ),
-                      ),
-                    );
-                  },
+                  onPressed: _goToComparison,
                   icon: const Icon(Icons.people_outline),
                   label: const Text(
                     'Comparar con tu grupo de edad',
@@ -294,24 +299,7 @@ class ResultScreen extends StatelessWidget {
               const SizedBox(height: 16),
               
               TextButton.icon(
-                onPressed: () {
-                  final recommendation = RecommendationService.getDetailedRecommendation(
-                    heartRate: heartRate,
-                    ageRange: ageRange,
-                    gender: gender,
-                    conditions: conditions,
-                    symptoms: symptoms,
-                    medications: medications,
-                  );
-                  final comparison = ComparisonService.getDetailedComparison(
-                    heartRate: heartRate,
-                    ageRange: ageRange,
-                    gender: gender,
-                    conditions: conditions,
-                    symptoms: symptoms,
-                  );
-                  _saveAndGoHome(context, recommendation, comparison);
-                },
+                onPressed: _saveAndGoHome,
                 icon: const Icon(Icons.save, color: Colors.green),
                 label: const Text(
                   'Guardar medición y salir',
