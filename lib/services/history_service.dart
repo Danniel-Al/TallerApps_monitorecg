@@ -1,40 +1,35 @@
-// lib/services/history_service.dart
-// SERVICIO PARA GUARDAR Y CARGAR EL HISTORIAL DE MEDICIONES
+// lib/services/memory_history_service.dart
+// SERVICIO DE HISTORIAL EN MEMORIA (SE BORRA AL CERRAR LA APP)
 
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../models/measurement_record.dart';
 
-class HistoryService {
-  static const String _historyKey = 'measurement_history';
+class MemoryHistoryService {
+  // Lista estática que se mantiene mientras la app está abierta
+  static final List<MeasurementRecord> _records = [];
 
-  static Future<void> saveMeasurement(MeasurementRecord record) async {
-    final prefs = await SharedPreferences.getInstance();
-    final List<String>? existing = prefs.getStringList(_historyKey);
-    final List<String> updated = existing ?? [];
-    updated.add(jsonEncode(record.toMap()));
-    await prefs.setStringList(_historyKey, updated);
+  // Guardar una nueva medición
+  static void saveMeasurement(MeasurementRecord record) {
+    _records.add(record);
+    _records.sort((a, b) => b.dateTime.compareTo(a.dateTime));
   }
 
-  static Future<List<MeasurementRecord>> loadMeasurements() async {
-    final prefs = await SharedPreferences.getInstance();
-    final List<String>? stored = prefs.getStringList(_historyKey);
-    if (stored == null) return [];
-    final records = stored.map((item) => MeasurementRecord.fromMap(jsonDecode(item))).toList();
-    records.sort((a, b) => b.dateTime.compareTo(a.dateTime));
-    return records;
+  // Obtener todas las mediciones
+  static List<MeasurementRecord> getMeasurements() {
+    return List.from(_records);
   }
 
-  static Future<void> deleteMeasurement(String id) async {
-    final prefs = await SharedPreferences.getInstance();
-    final List<String>? stored = prefs.getStringList(_historyKey);
-    if (stored == null) return;
-    final updated = stored.where((item) => jsonDecode(item)['id'] != id).toList();
-    await prefs.setStringList(_historyKey, updated);
+  // Eliminar una medición específica
+  static void deleteMeasurement(String id) {
+    _records.removeWhere((record) => record.id == id);
   }
 
-  static Future<void> clearHistory() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_historyKey);
+  // Eliminar todo el historial
+  static void clearHistory() {
+    _records.clear();
+  }
+
+  // Obtener cantidad de mediciones
+  static int getCount() {
+    return _records.length;
   }
 }
