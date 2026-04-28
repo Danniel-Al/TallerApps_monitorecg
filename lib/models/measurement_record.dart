@@ -27,4 +27,38 @@ class MeasurementRecord {
     required this.comparisonStatus,
     required this.comparisonText,
   });
+
+  // Convertir a mapa para guardar en SharedPreferences
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'dateTime': dateTime.toIso8601String(),
+      'heartRate': heartRate,
+      'ageRange': ageRange,
+      'gender': gender,
+      'conditions': conditions,
+      'symptoms': symptoms,
+      'medications': medications,
+      'recommendation': recommendation,
+      'comparisonStatus': comparisonStatus,
+      'comparisonText': comparisonText,
+    };
+  }
+
+  // Crear desde mapa para cargar desde SharedPreferences
+  factory MeasurementRecord.fromMap(Map<String, dynamic> map) {
+    return MeasurementRecord(
+      id: map['id'],
+      dateTime: DateTime.parse(map['dateTime']),
+      heartRate: map['heartRate'],
+      ageRange: map['ageRange'],
+      gender: map['gender'],
+      conditions: map['conditions'],
+      symptoms: map['symptoms'],
+      medications: map['medications'],
+      recommendation: map['recommendation'],
+      comparisonStatus: map['comparisonStatus'],
+      comparisonText: map['comparisonText'],
+    );
+  }
 }
