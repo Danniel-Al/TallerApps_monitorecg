@@ -1,5 +1,5 @@
 // lib/screens/demographic_screen.dart
-// Pantalla de datos demográficos con diseño mejorado
+// PANTALLA DE DATOS DEMOGRÁFICOS (SOLO PRIMERA VEZ)
 
 import 'package:flutter/material.dart';
 import '../utils/constants.dart';
@@ -26,30 +26,26 @@ class _DemographicScreenState extends State<DemographicScreen> {
   void _saveAndContinue() async {
     setState(() => _isLoading = true);
 
-    final userData = UserData(
-      username: widget.username,
-      hasCompletedDemographics: true,
-      ageRange: _selectedAgeRange,
-      gender: _selectedGender,
-      conditions: _selectedConditions,
-      symptoms: _selectedSymptoms,
-      medications: _selectedMedications,
-    );
-
     await Future.delayed(const Duration(milliseconds: 500));
 
     if (mounted) {
       setState(() => _isLoading = false);
-            Navigator.pushReplacement(
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => HomeScreen(username: widget.username),  // ← PASA USERNAME
+          builder: (_) => HomeScreen(
+            username: widget.username,
+            ageRange: _selectedAgeRange,
+            gender: _selectedGender,
+            conditions: _selectedConditions,
+            symptoms: _selectedSymptoms,
+            medications: _selectedMedications,
+          ),
         ),
       );
     }
   }
 
-  // Widget reutilizable para cada selector
   Widget _buildSelector({
     required String label,
     required String icon,
@@ -60,33 +56,34 @@ class _DemographicScreenState extends State<DemographicScreen> {
     return Card(
       elevation: 2,
       margin: const EdgeInsets.only(bottom: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Text(icon, style: const TextStyle(fontSize: 20)),
-                const SizedBox(width: 8),
+                Text(icon, style: const TextStyle(fontSize: 22)),
+                const SizedBox(width: 12),
                 Text(
                   label,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
+                    color: Colors.red,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             DropdownButtonFormField<int>(
-              initialValue: value,
+              value: value,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                 filled: true,
                 fillColor: Colors.grey.shade50,
               ),
@@ -137,7 +134,6 @@ class _DemographicScreenState extends State<DemographicScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Mensaje de bienvenida personalizado
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
@@ -146,7 +142,7 @@ class _DemographicScreenState extends State<DemographicScreen> {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -169,7 +165,6 @@ class _DemographicScreenState extends State<DemographicScreen> {
                   ),
                   const SizedBox(height: 24),
 
-                  // Selector: Edad
                   _buildSelector(
                     label: 'Edad',
                     icon: '🎂',
@@ -178,7 +173,6 @@ class _DemographicScreenState extends State<DemographicScreen> {
                     onChanged: (val) => setState(() => _selectedAgeRange = val),
                   ),
 
-                  // Selector: Sexo
                   _buildSelector(
                     label: 'Sexo',
                     icon: '👤',
@@ -187,7 +181,6 @@ class _DemographicScreenState extends State<DemographicScreen> {
                     onChanged: (val) => setState(() => _selectedGender = val),
                   ),
 
-                  // Selector: Antecedentes cardíacos
                   _buildSelector(
                     label: 'Antecedentes cardíacos',
                     icon: '❤️',
@@ -196,7 +189,6 @@ class _DemographicScreenState extends State<DemographicScreen> {
                     onChanged: (val) => setState(() => _selectedConditions = val),
                   ),
 
-                  // Selector: Síntomas actuales
                   _buildSelector(
                     label: 'Síntomas actuales',
                     icon: '🤒',
@@ -205,9 +197,8 @@ class _DemographicScreenState extends State<DemographicScreen> {
                     onChanged: (val) => setState(() => _selectedSymptoms = val),
                   ),
 
-                  // Selector: Medicamentos (con descripciones)
                   _buildSelector(
-                    label: 'Medicamentos que tomas',
+                    label: 'Medicamentos',
                     icon: '💊',
                     value: _selectedMedications,
                     items: medicationsList,
@@ -216,7 +207,6 @@ class _DemographicScreenState extends State<DemographicScreen> {
 
                   const SizedBox(height: 24),
 
-                  // Botón Continuar (blanco sobre fondo rojo, con estilo moderno)
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -240,7 +230,6 @@ class _DemographicScreenState extends State<DemographicScreen> {
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 20),
                 ],
               ),
