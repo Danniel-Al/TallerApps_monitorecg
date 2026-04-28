@@ -6,9 +6,22 @@ import 'measurement_screen.dart';
 import 'profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  final String username;  // Recibe el username del usuario
+  final String username;
+  final int ageRange;
+  final int gender;
+  final int conditions;
+  final int symptoms;
+  final int medications;
 
-  const HomeScreen({super.key, required this.username});
+  const HomeScreen({
+    super.key,
+    required this.username,
+    required this.ageRange,
+    required this.gender,
+    required this.conditions,
+    required this.symptoms,
+    required this.medications,
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -16,16 +29,21 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
-
-  // Lista de pantallas para cada pestaña
   late final List<Widget> _screens;
 
   @override
   void initState() {
     super.initState();
     _screens = [
-      const MeasurementScreen(),                    // Pestaña de medición
-      ProfileScreen(username: widget.username),    // Pestaña de perfil (recibe username)
+      // Pasar todos los datos demográficos a MeasurementScreen
+      MeasurementScreen(
+        ageRange: widget.ageRange,
+        gender: widget.gender,
+        conditions: widget.conditions,
+        symptoms: widget.symptoms,
+        medications: widget.medications,
+      ),
+      ProfileScreen(username: widget.username),
     ];
   }
 
