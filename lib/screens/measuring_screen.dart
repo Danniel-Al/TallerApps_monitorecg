@@ -1,5 +1,4 @@
 // lib/screens/measuring_screen.dart
-// PANTALLA DE MEDICIÓN ACTIVA (SIMULACIÓN DE LATIDOS)
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -8,7 +7,7 @@ import 'result_screen.dart';
 class MeasuringScreen extends StatefulWidget {
   final int ageRange;
   final int gender;
-  final int conditions;
+  final List<int> conditions;
   final int symptoms;
   final int medications;
   final String username;
@@ -27,8 +26,7 @@ class MeasuringScreen extends StatefulWidget {
   State<MeasuringScreen> createState() => _MeasuringScreenState();
 }
 
-class _MeasuringScreenState extends State<MeasuringScreen>
-    with SingleTickerProviderStateMixin {
+class _MeasuringScreenState extends State<MeasuringScreen> with SingleTickerProviderStateMixin {
   int _timeRemaining = 30;
   int _heartBeats = 0;
   bool _isMeasuring = true;
@@ -40,35 +38,22 @@ class _MeasuringScreenState extends State<MeasuringScreen>
   void initState() {
     super.initState();
     _startMeasurement();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 300),
-    );
+    _animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
   }
 
   void _startMeasurement() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
-        if (_timeRemaining > 1) {
-          _timeRemaining--;
-        } else {
-          _stopMeasurement();
-        }
+        if (_timeRemaining > 1) _timeRemaining--;
+        else _stopMeasurement();
       });
     });
-
     _heartBeatSimulator = Timer.periodic(const Duration(milliseconds: 800), (timer) {
       if (_isMeasuring) {
-        setState(() {
-          _heartBeats++;
-        });
-        _animateHeartBeat();
+        setState(() => _heartBeats++);
+        _animationController.forward(from: 0.0);
       }
     });
-  }
-
-  void _animateHeartBeat() {
-    _animationController.forward(from: 0.0);
   }
 
   void _stopMeasurement() {
@@ -76,9 +61,7 @@ class _MeasuringScreenState extends State<MeasuringScreen>
     _timer.cancel();
     _heartBeatSimulator.cancel();
     _animationController.dispose();
-
     int heartRate = (_heartBeats * 2).clamp(40, 180).toInt();
-
     if (mounted) {
       Navigator.pushReplacement(
         context,
@@ -107,58 +90,22 @@ class _MeasuringScreenState extends State<MeasuringScreen>
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isSmallScreen = screenWidth < 600;
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.all(isSmallScreen ? 20 : 30),
+          padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              const SizedBox(height: 10),
-              
-              // Título
-              const Text(
-                'Midiendo frecuencia cardíaca',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.red,
-                ),
-                textAlign: TextAlign.center,
-              ),
+              const Text('Midiendo frecuencia cardíaca', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.red), textAlign: TextAlign.center),
               const SizedBox(height: 12),
-
-              // Temporizador
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                decoration: BoxDecoration(
-                  color: Colors.red.shade50,
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: Text(
-                  '${_timeRemaining ~/ 60}:${(_timeRemaining % 60).toString().padLeft(2, '0')}',
-                  style: const TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.red,
-                  ),
-                ),
+                decoration: BoxDecoration(color: Colors.red.shade50, borderRadius: BorderRadius.circular(30)),
+                child: Text('${_timeRemaining ~/ 60}:${(_timeRemaining % 60).toString().padLeft(2, '0')}', style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.red)),
               ),
-              const SizedBox(height: 8),
-
-              // Latidos detectados
-              Text(
-                'Latidos detectados: $_heartBeats',
-                style: const TextStyle(fontSize: 14, color: Colors.black54),
-              ),
-
-              // ESPACIO FLEXIBLE para centrar el corazón
+              Text('Latidos detectados: $_heartBeats', style: const TextStyle(fontSize: 14, color: Colors.black54)),
               const Expanded(child: SizedBox()),
-
-              // Corazón animado (centrado)
               Center(
                 child: AnimatedBuilder(
                   animation: _animationController,
@@ -168,54 +115,17 @@ class _MeasuringScreenState extends State<MeasuringScreen>
                       scale: scale,
                       child: Container(
                         padding: const EdgeInsets.all(24),
-                        decoration: BoxDecoration(
-                          color: Colors.red.shade50,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.favorite,
-                          size: 80,
-                          color: Colors.red,
-                        ),
+                        decoration: BoxDecoration(color: Colors.red.shade50, shape: BoxShape.circle),
+                        child: const Icon(Icons.favorite, size: 80, color: Colors.red),
                       ),
                     );
                   },
                 ),
               ),
-
-              // ESPACIO FLEXIBLE para mantener centrado
               const Expanded(child: SizedBox()),
-
-              // Mensaje de instrucción
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade50,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.touch_app, size: 18, color: Colors.black54),
-                    SizedBox(width: 8),
-                    Text(
-                      'Mantén tus dedos quietos sobre el sensor',
-                      style: TextStyle(fontSize: 14, color: Colors.black45),
-                    ),
-                  ],
-                ),
-              ),
+              const Text('Mantén tus dedos quietos sobre el sensor', style: TextStyle(fontSize: 14, color: Colors.black45)),
               const SizedBox(height: 16),
-
-              // Botón cancelar
-              TextButton(
-                onPressed: _stopMeasurement,
-                child: Text(
-                  'Cancelar medición',
-                  style: TextStyle(color: Colors.red.shade400, fontSize: 14),
-                ),
-              ),
-              const SizedBox(height: 8),
+              TextButton(onPressed: _stopMeasurement, child: Text('Cancelar medición', style: TextStyle(color: Colors.red.shade400))),
             ],
           ),
         ),
