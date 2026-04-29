@@ -1,6 +1,4 @@
 // lib/screens/profile_screen.dart
-// CORREGIDO
-
 import 'package:flutter/material.dart';
 import '../models/user_data.dart';
 import '../services/memory_history_service.dart';
@@ -31,7 +29,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         hasCompletedDemographics: true,
         ageRange: 2,
         gender: 0,
-        conditions: [0, 7],
+        conditions: const [0, 7],
         symptoms: 0,
         medications: 0,
       );
