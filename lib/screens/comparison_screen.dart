@@ -25,8 +25,14 @@ class ComparisonScreen extends StatelessWidget {
     }
   }
 
+  String _cleanText(String text) {
+    return text.replaceAll('**', '').replaceAll('*', '');
+  }
+
   @override
   Widget build(BuildContext context) {
+    final String cleanRecommendation = _cleanText(comparison.recommendation);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -43,10 +49,7 @@ class ComparisonScreen extends StatelessWidget {
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(colors: [Colors.red.shade50, Colors.red.shade100]),
-                  borderRadius: BorderRadius.circular(20),
-                ),
+                decoration: BoxDecoration(gradient: LinearGradient(colors: [Colors.red.shade50, Colors.red.shade100]), borderRadius: BorderRadius.circular(20)),
                 child: Column(
                   children: [
                     const Icon(Icons.people, size: 48, color: Colors.red),
@@ -55,10 +58,7 @@ class ComparisonScreen extends StatelessWidget {
                     const SizedBox(height: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: _getStatusColor().withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
+                      decoration: BoxDecoration(color: _getStatusColor().withValues(alpha: 0.2), borderRadius: BorderRadius.circular(20)),
                       child: Text(comparison.status, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: _getStatusColor())),
                     ),
                   ],
@@ -67,11 +67,7 @@ class ComparisonScreen extends StatelessWidget {
               const SizedBox(height: 24),
               Container(
                 padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade50,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.grey.shade200),
-                ),
+                decoration: BoxDecoration(color: Colors.grey.shade50, borderRadius: BorderRadius.circular(16), border: Border.all(color: Colors.grey.shade200)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -88,17 +84,13 @@ class ComparisonScreen extends StatelessWidget {
               const SizedBox(height: 24),
               Container(
                 padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: _getStatusColor().withValues(alpha: 0.05),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: _getStatusColor().withValues(alpha: 0.2)),
-                ),
+                decoration: BoxDecoration(color: _getStatusColor().withValues(alpha: 0.05), borderRadius: BorderRadius.circular(16), border: Border.all(color: _getStatusColor().withValues(alpha: 0.2))),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(children: [Icon(Icons.medical_services, color: _getStatusColor()), const SizedBox(width: 8), const Text('Interpretación y recomendaciones', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))]),
                     const Divider(height: 24),
-                    Text(comparison.recommendation, style: const TextStyle(fontSize: 14, height: 1.5)),
+                    Text(cleanRecommendation, style: const TextStyle(fontSize: 14, height: 1.5)),
                   ],
                 ),
               ),

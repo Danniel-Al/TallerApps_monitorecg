@@ -39,8 +39,14 @@ class RecommendationScreen extends StatelessWidget {
     return Icons.health_and_safety;
   }
 
+  String _cleanText(String text) {
+    return text.replaceAll('**', '').replaceAll('*', '');
+  }
+
   @override
   Widget build(BuildContext context) {
+    final String cleanRecommendation = _cleanText(recommendation);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -65,7 +71,7 @@ class RecommendationScreen extends StatelessWidget {
                     Container(
                       margin: const EdgeInsets.all(20),
                       padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), shape: BoxShape.circle),
+                      decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), shape: BoxShape.circle),
                       child: Icon(_getStatusIcon(), size: 48, color: Colors.white),
                     ),
                     Text('$heartRate', style: const TextStyle(fontSize: 56, fontWeight: FontWeight.bold, color: Colors.white)),
@@ -74,7 +80,7 @@ class RecommendationScreen extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                       margin: const EdgeInsets.only(bottom: 20),
-                      decoration: BoxDecoration(color: _getStatusColor().withOpacity(0.3), borderRadius: BorderRadius.circular(20)),
+                      decoration: BoxDecoration(color: _getStatusColor().withValues(alpha: 0.3), borderRadius: BorderRadius.circular(20)),
                       child: Text(_getStatusText(), style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white)),
                     ),
                   ],
@@ -95,7 +101,7 @@ class RecommendationScreen extends StatelessWidget {
                       decoration: BoxDecoration(color: Colors.blue.shade50, borderRadius: BorderRadius.circular(12)),
                       child: const Row(children: [Icon(Icons.info_outline, color: Colors.blue, size: 20), SizedBox(width: 8), Expanded(child: Text('Esta recomendación se basa en tu frecuencia cardíaca actual y los datos demográficos que proporcionaste.', style: TextStyle(fontSize: 12, color: Colors.black54)))]),
                     ),
-                    Text(recommendation, style: const TextStyle(fontSize: 15, height: 1.6, color: Colors.black87)),
+                    Text(cleanRecommendation, style: const TextStyle(fontSize: 15, height: 1.6, color: Colors.black87)),
                   ],
                 ),
               ),
@@ -106,7 +112,12 @@ class RecommendationScreen extends StatelessWidget {
                   onPressed: () => Navigator.pop(context),
                   icon: const Icon(Icons.arrow_back),
                   label: const Text('Volver', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  style: OutlinedButton.styleFrom(foregroundColor: Colors.red, side: BorderSide(color: Colors.red.shade300), padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.red,
+                    side: BorderSide(color: Colors.red.shade300),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                  ),
                 ),
               ),
             ],
