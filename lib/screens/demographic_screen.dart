@@ -86,8 +86,23 @@ class _DemographicScreenState extends State<DemographicScreen> {
             const SizedBox(height: 24),
             Container(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(color: Colors.green.shade50, borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.green.shade200)),
-              child: const Row(children: [Icon(Icons.check_circle, color: Colors.green), SizedBox(width: 12), Expanded(child: Text('¡Ya casi terminas! Estos datos nos ayudarán a darte recomendaciones más precisas.', style: TextStyle(fontSize: 13)))]),
+              decoration: BoxDecoration(
+                color: Colors.green.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.green.shade200),
+              ),
+              child: const Row(
+                children: [
+                  Icon(Icons.check_circle, color: Colors.green),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      '¡Ya casi terminas! Estos datos nos ayudarán a darte recomendaciones más precisas.',
+                      style: TextStyle(fontSize: 13),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         );
@@ -106,9 +121,30 @@ class _DemographicScreenState extends State<DemographicScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(children: [Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: Colors.red.shade50, borderRadius: BorderRadius.circular(12)), child: const Text('❤️', style: TextStyle(fontSize: 24))), const SizedBox(width: 16), const Expanded(child: Text('Antecedentes cardíacos y factores de riesgo', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.red)))]),
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.red.shade50,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Text('❤️', style: TextStyle(fontSize: 24)),
+                ),
+                const SizedBox(width: 16),
+                const Expanded(
+                  child: Text(
+                    'Antecedentes cardíacos y factores de riesgo',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.red),
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 20),
-            const Text('Selecciona TODOS los que apliquen:', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+            const Text(
+              'Selecciona TODOS los que apliquen:',
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+            ),
             const SizedBox(height: 12),
             ...List.generate(conditionsList.length, (index) {
               return CheckboxListTile(
@@ -124,8 +160,22 @@ class _DemographicScreenState extends State<DemographicScreen> {
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(color: Colors.blue.shade50, borderRadius: BorderRadius.circular(12)),
-              child: const Row(children: [Icon(Icons.info_outline, size: 20, color: Colors.blue), SizedBox(width: 8), Expanded(child: Text('Puedes seleccionar múltiples opciones. Esto ayuda a evaluar mejor tu riesgo cardiovascular.', style: TextStyle(fontSize: 12)))]),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Row(
+                children: [
+                  Icon(Icons.info_outline, size: 20, color: Colors.blue),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Puedes seleccionar múltiples opciones. Esto ayuda a evaluar mejor tu riesgo cardiovascular.',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -135,26 +185,57 @@ class _DemographicScreenState extends State<DemographicScreen> {
 
   Widget _buildSelector(String label, String icon, int value, List<String> items, Function(int) onChanged) {
     return Card(
-      elevation: 4,
+      elevation: 2,
       margin: const EdgeInsets.only(bottom: 16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(children: [Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: Colors.red.shade50, borderRadius: BorderRadius.circular(12)), child: Text(icon, style: const TextStyle(fontSize: 24))), const SizedBox(width: 16), Expanded(child: Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.red)))]),
-            const SizedBox(height: 20),
-            DropdownButtonFormField<int>(
-              initialValue: value,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                filled: true,
-                fillColor: Colors.grey.shade50,
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.red.shade50,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(icon, style: const TextStyle(fontSize: 20)),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    label,
+                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.red),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Container(
+              constraints: const BoxConstraints(maxWidth: 400),
+              child: DropdownButtonFormField<int>(
+                initialValue: value,
+                isExpanded: true,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  filled: true,
+                  fillColor: Colors.grey.shade50,
+                ),
+                items: items.asMap().entries.map((entry) {
+                  return DropdownMenuItem<int>(
+                    value: entry.key,
+                    child: Text(
+                      entry.value,
+                      style: const TextStyle(fontSize: 13),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  );
+                }).toList(),
+                onChanged: (val) => onChanged(val!),
               ),
-              items: items.asMap().entries.map((entry) => DropdownMenuItem<int>(value: entry.key, child: Text(entry.value))).toList(),
-              onChanged: (val) => onChanged(val!),
             ),
           ],
         ),
@@ -182,19 +263,42 @@ class _DemographicScreenState extends State<DemographicScreen> {
               children: [
                 Container(
                   padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(color: Colors.red.shade50, borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30))),
+                  decoration: BoxDecoration(
+                    color: Colors.red.shade50,
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(30),
+                      bottomRight: Radius.circular(30),
+                    ),
+                  ),
                   child: Column(
                     children: [
                       Row(
                         children: [
-                          Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle), child: const Icon(Icons.person_add, color: Colors.red, size: 28)),
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(Icons.person_add, color: Colors.red, size: 28),
+                          ),
                           const SizedBox(width: 16),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('¡Hola ${widget.username}!', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.red)),
-                                const Text('Cuéntanos sobre ti para recomendaciones personalizadas', style: TextStyle(fontSize: 12, color: Colors.black54)),
+                                Text(
+                                  '¡Hola ${widget.username}!',
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                                const Text(
+                                  'Cuéntanos sobre ti para recomendaciones personalizadas',
+                                  style: TextStyle(fontSize: 12, color: Colors.black54),
+                                ),
                               ],
                             ),
                           ),
@@ -212,15 +316,37 @@ class _DemographicScreenState extends State<DemographicScreen> {
                                   Container(
                                     width: 30,
                                     height: 30,
-                                    decoration: BoxDecoration(shape: BoxShape.circle, color: index <= _currentStep ? Colors.red : Colors.grey.shade300),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: index <= _currentStep
+                                          ? Colors.red
+                                          : Colors.grey.shade300,
+                                    ),
                                     child: Center(
                                       child: index < _currentStep
                                           ? const Icon(Icons.check, size: 16, color: Colors.white)
-                                          : Text('${index + 1}', style: TextStyle(color: index <= _currentStep ? Colors.white : Colors.grey.shade600, fontSize: 12, fontWeight: FontWeight.bold)),
+                                          : Text(
+                                              '${index + 1}',
+                                              style: TextStyle(
+                                                color: index <= _currentStep
+                                                    ? Colors.white
+                                                    : Colors.grey.shade600,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
                                     ),
                                   ),
                                   const SizedBox(height: 4),
-                                  Text(_steps[index], style: TextStyle(fontSize: isSmallScreen ? 8 : 10, color: index <= _currentStep ? Colors.red : Colors.grey)),
+                                  Text(
+                                    _steps[index],
+                                    style: TextStyle(
+                                      fontSize: isSmallScreen ? 8 : 10,
+                                      color: index <= _currentStep
+                                          ? Colors.red
+                                          : Colors.grey,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -244,7 +370,14 @@ class _DemographicScreenState extends State<DemographicScreen> {
                         Expanded(
                           child: OutlinedButton(
                             onPressed: _previousStep,
-                            style: OutlinedButton.styleFrom(foregroundColor: Colors.red, side: BorderSide(color: Colors.red.shade300), padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.red,
+                              side: BorderSide(color: Colors.red.shade300),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
                             child: const Text('Anterior'),
                           ),
                         ),
@@ -252,7 +385,14 @@ class _DemographicScreenState extends State<DemographicScreen> {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: _nextStep,
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
                           child: Text(_currentStep == 3 ? 'Finalizar' : 'Siguiente'),
                         ),
                       ),

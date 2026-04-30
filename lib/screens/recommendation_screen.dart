@@ -1,4 +1,6 @@
 // lib/screens/recommendation_screen.dart
+// VERSIÓN CON TARJETAS SEPARADAS POR SECCIÓN
+
 import 'package:flutter/material.dart';
 
 class RecommendationScreen extends StatelessWidget {
@@ -43,9 +45,40 @@ class RecommendationScreen extends StatelessWidget {
     return text.replaceAll('**', '').replaceAll('*', '');
   }
 
+  List<Map<String, String>> _parseRecommendation() {
+    String clean = _cleanText(recommendation);
+    List<Map<String, String>> sections = [];
+    
+    List<String> parts = clean.split('\n\n');
+    
+    for (String part in parts) {
+      if (part.trim().isEmpty) continue;
+      
+      String title = '';
+      String content = part;
+      
+      if (part.contains(':')) {
+        List<String> lines = part.split('\n');
+        if (lines.isNotEmpty && lines[0].endsWith(':')) {
+          title = lines[0].replaceAll(':', '');
+          content = lines.skip(1).join('\n');
+        }
+      }
+      
+      sections.add({
+        'title': title,
+        'content': content.trim(),
+      });
+    }
+    
+    return sections;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final String cleanRecommendation = _cleanText(recommendation);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 600;
+    final sections = _parseRecommendation();
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -57,55 +90,107 @@ class RecommendationScreen extends StatelessWidget {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
           child: Column(
             children: [
+              // Tarjeta principal con FC y estado
               Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(colors: [Colors.red.shade400, Colors.red.shade700]),
+                  gradient: LinearGradient(
+                    colors: [Colors.red.shade400, Colors.red.shade700],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
                   borderRadius: BorderRadius.circular(24),
                 ),
                 child: Column(
                   children: [
                     Container(
-                      margin: const EdgeInsets.all(20),
+                      margin: const EdgeInsets.all(16),
                       padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), shape: BoxShape.circle),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        shape: BoxShape.circle,
+                      ),
                       child: Icon(_getStatusIcon(), size: 48, color: Colors.white),
                     ),
-                    Text('$heartRate', style: const TextStyle(fontSize: 56, fontWeight: FontWeight.bold, color: Colors.white)),
-                    const Text('latidos por minuto', style: TextStyle(fontSize: 14, color: Colors.white70)),
+                    Text(
+                      '$heartRate',
+                      style: const TextStyle(fontSize: 56, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                    const Text(
+                      'latidos por minuto',
+                      style: TextStyle(fontSize: 14, color: Colors.white70),
+                    ),
                     const SizedBox(height: 16),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                       margin: const EdgeInsets.only(bottom: 20),
-                      decoration: BoxDecoration(color: _getStatusColor().withValues(alpha: 0.3), borderRadius: BorderRadius.circular(20)),
-                      child: Text(_getStatusText(), style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white)),
+                      decoration: BoxDecoration(
+                        color: _getStatusColor().withValues(alpha: 0.3),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        _getStatusText(),
+                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+                      ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(color: Colors.grey.shade50, borderRadius: BorderRadius.circular(20), border: Border.all(color: Colors.grey.shade200)),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Row(children: [Icon(Icons.medical_services, color: Colors.red, size: 28), SizedBox(width: 12), Text('Análisis personalizado', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red))]),
-                    const Divider(height: 28),
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      margin: const EdgeInsets.only(bottom: 16),
-                      decoration: BoxDecoration(color: Colors.blue.shade50, borderRadius: BorderRadius.circular(12)),
-                      child: const Row(children: [Icon(Icons.info_outline, color: Colors.blue, size: 20), SizedBox(width: 8), Expanded(child: Text('Esta recomendación se basa en tu frecuencia cardíaca actual y los datos demográficos que proporcionaste.', style: TextStyle(fontSize: 12, color: Colors.black54)))]),
+              const SizedBox(height: 20),
+
+              // Secciones separadas en tarjetas
+              ...sections.map((section) {
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: _getCardColor(section['title'] ?? ''),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: _getCardBorderColor(section['title'] ?? ''),
+                      width: 1,
                     ),
-                    Text(cleanRecommendation, style: const TextStyle(fontSize: 15, height: 1.6, color: Colors.black87)),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (section['title']!.isNotEmpty)
+                        Row(
+                          children: [
+                            Icon(
+                              _getIconForTitle(section['title']!),
+                              color: _getIconColor(section['title']!),
+                              size: 22,
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                section['title']!,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: _getTitleColor(section['title']!),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      if (section['title']!.isNotEmpty) const SizedBox(height: 12),
+                      Text(
+                        section['content']!,
+                        style: const TextStyle(fontSize: 14, height: 1.5, color: Colors.black87),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+
+              const SizedBox(height: 16),
+              
+              // Botón volver
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton.icon(
@@ -116,7 +201,9 @@ class RecommendationScreen extends StatelessWidget {
                     foregroundColor: Colors.red,
                     side: BorderSide(color: Colors.red.shade300),
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
                   ),
                 ),
               ),
@@ -125,5 +212,55 @@ class RecommendationScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Color _getCardColor(String title) {
+    if (title.contains('ANÁLISIS') || title.contains('TU RITMO')) return Colors.red.shade50;
+    if (title.contains('FACTORES') || title.contains('RIESGO')) return Colors.orange.shade50;
+    if (title.contains('MEDICAMENTOS')) return Colors.blue.shade50;
+    if (title.contains('RECOMENDACIONES')) return Colors.green.shade50;
+    if (title.contains('MÉDICO')) return Colors.purple.shade50;
+    if (title.contains('CONSEJOS')) return Colors.teal.shade50;
+    return Colors.grey.shade50;
+  }
+
+  Color _getCardBorderColor(String title) {
+    if (title.contains('ANÁLISIS') || title.contains('TU RITMO')) return Colors.red.shade200;
+    if (title.contains('FACTORES') || title.contains('RIESGO')) return Colors.orange.shade200;
+    if (title.contains('MEDICAMENTOS')) return Colors.blue.shade200;
+    if (title.contains('RECOMENDACIONES')) return Colors.green.shade200;
+    if (title.contains('MÉDICO')) return Colors.purple.shade200;
+    if (title.contains('CONSEJOS')) return Colors.teal.shade200;
+    return Colors.grey.shade200;
+  }
+
+  Color _getTitleColor(String title) {
+    if (title.contains('ANÁLISIS') || title.contains('TU RITMO')) return Colors.red.shade700;
+    if (title.contains('FACTORES') || title.contains('RIESGO')) return Colors.orange.shade700;
+    if (title.contains('MEDICAMENTOS')) return Colors.blue.shade700;
+    if (title.contains('RECOMENDACIONES')) return Colors.green.shade700;
+    if (title.contains('MÉDICO')) return Colors.purple.shade700;
+    if (title.contains('CONSEJOS')) return Colors.teal.shade700;
+    return Colors.grey.shade700;
+  }
+
+  IconData _getIconForTitle(String title) {
+    if (title.contains('ANÁLISIS') || title.contains('TU RITMO')) return Icons.favorite;
+    if (title.contains('FACTORES') || title.contains('RIESGO')) return Icons.warning_amber;
+    if (title.contains('MEDICAMENTOS')) return Icons.medical_services;
+    if (title.contains('RECOMENDACIONES')) return Icons.lightbulb;
+    if (title.contains('MÉDICO')) return Icons.local_hospital;
+    if (title.contains('CONSEJOS')) return Icons.fitness_center;
+    return Icons.info;
+  }
+
+  Color _getIconColor(String title) {
+    if (title.contains('ANÁLISIS') || title.contains('TU RITMO')) return Colors.red;
+    if (title.contains('FACTORES') || title.contains('RIESGO')) return Colors.orange;
+    if (title.contains('MEDICAMENTOS')) return Colors.blue;
+    if (title.contains('RECOMENDACIONES')) return Colors.green;
+    if (title.contains('MÉDICO')) return Colors.purple;
+    if (title.contains('CONSEJOS')) return Colors.teal;
+    return Colors.grey;
   }
 }
