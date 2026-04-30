@@ -9,12 +9,6 @@ class MeasurementDetailScreen extends StatelessWidget {
   final MeasurementRecord record;
   const MeasurementDetailScreen({super.key, required this.record});
 
-  String _getStatusText() {
-    if (record.heartRate < 60) return 'Bradicardia (Ritmo lento)';
-    if (record.heartRate > 100) return 'Taquicardia (Ritmo rápido)';
-    return 'Normal (Ritmo saludable)';
-  }
-
   Color _getStatusColor() {
     if (record.heartRate < 60) return Colors.orange;
     if (record.heartRate > 100) return Colors.red;
@@ -23,6 +17,8 @@ class MeasurementDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String statusText = record.heartRate < 60 ? 'Bradicardia' : (record.heartRate > 100 ? 'Taquicardia' : 'Normal');
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -58,15 +54,40 @@ class MeasurementDetailScreen extends StatelessWidget {
             ),
             Text('${record.heartRate}', style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: Colors.red)),
             const Text('latidos por minuto', style: TextStyle(fontSize: 14, color: Colors.black54)),
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              decoration: BoxDecoration(color: _getStatusColor().withValues(alpha: 0.1), borderRadius: BorderRadius.circular(20)),
+              child: Text(statusText, style: TextStyle(color: _getStatusColor(), fontWeight: FontWeight.w500)),
+            ),
             const SizedBox(height: 24),
             Row(
               children: [
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => RecommendationScreen(heartRate: record.heartRate, recommendation: record.recommendation, ageRange: record.ageRange, gender: record.gender, conditions: record.conditions, symptoms: record.symptoms, medications: record.medications))),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => RecommendationScreen(
+                            heartRate: record.heartRate,
+                            recommendation: record.recommendation,
+                            ageRange: record.ageRange,
+                            gender: record.gender,
+                            conditions: record.conditions,
+                            symptoms: record.symptoms,
+                            medications: record.medications,
+                          ),
+                        ),
+                      );
+                    },
                     icon: const Icon(Icons.medical_information),
                     label: const Text('Recomendación'),
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -80,14 +101,43 @@ class MeasurementDetailScreen extends StatelessWidget {
                         conditions: record.conditions,
                         symptoms: record.symptoms,
                       );
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => ComparisonScreen(comparison: comparison, heartRate: record.heartRate, ageRange: record.ageRange, gender: record.gender)));
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ComparisonScreen(
+                            comparison: comparison,
+                            heartRate: record.heartRate,
+                            ageRange: record.ageRange,
+                            gender: record.gender,
+                          ),
+                        ),
+                      );
                     },
                     icon: const Icon(Icons.compare_arrows),
                     label: const Text('Comparar'),
-                    style: OutlinedButton.styleFrom(foregroundColor: Colors.red, side: BorderSide(color: Colors.red.shade300), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.red,
+                      side: BorderSide(color: Colors.red.shade300),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                    ),
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(color: Colors.grey.shade50, borderRadius: BorderRadius.circular(12)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('📋 Resumen', style: TextStyle(fontWeight: FontWeight.bold)),
+                  const Divider(),
+                  Text(record.comparisonText, style: const TextStyle(fontSize: 12)),
+                  const SizedBox(height: 8),
+                  Text(record.recommendation, style: const TextStyle(fontSize: 12)),
+                ],
+              ),
             ),
           ],
         ),

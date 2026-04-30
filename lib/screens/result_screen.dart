@@ -41,14 +41,17 @@ class _ResultScreenState extends State<ResultScreen> {
   @override
   void initState() {
     super.initState();
+    
+    // Línea 48 aprox - aquí está el error si no coincide el tipo
     _recommendation = RecommendationService.getDetailedRecommendation(
       heartRate: widget.heartRate,
       ageRange: widget.ageRange,
       gender: widget.gender,
-      conditions: widget.conditions,
+      conditions: widget.conditions,  // ← List<int>
       symptoms: widget.symptoms,
       medications: widget.medications,
     );
+    
     _comparison = ComparisonService.getDetailedComparison(
       heartRate: widget.heartRate,
       ageRange: widget.ageRange,
@@ -56,6 +59,7 @@ class _ResultScreenState extends State<ResultScreen> {
       conditions: widget.conditions,
       symptoms: widget.symptoms,
     );
+    
     _correlationAnalysis = CorrelationService.getCorrelationAnalysis(
       heartRate: widget.heartRate,
       ageRange: widget.ageRange,
@@ -102,7 +106,6 @@ class _ResultScreenState extends State<ResultScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isNormal = widget.heartRate >= 60 && widget.heartRate <= 100;
     final Color statusColor = widget.heartRate < 60 ? Colors.orange : (widget.heartRate > 100 ? Colors.red : Colors.green);
     final String statusText = widget.heartRate < 60 ? 'Bradicardia' : (widget.heartRate > 100 ? 'Taquicardia' : 'Normal');
 
@@ -166,15 +169,38 @@ class _ResultScreenState extends State<ResultScreen> {
                   },
                   icon: const Icon(Icons.analytics),
                   label: const Text('Factores de riesgo y su correlación'),
-                  style: OutlinedButton.styleFrom(foregroundColor: Colors.blue, side: BorderSide(color: Colors.blue.shade300), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.blue,
+                    side: BorderSide(color: Colors.blue.shade300),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                  ),
                 ),
               ),
               const SizedBox(height: 12),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => RecommendationScreen(heartRate: widget.heartRate, recommendation: _recommendation, ageRange: widget.ageRange, gender: widget.gender, conditions: widget.conditions, symptoms: widget.symptoms, medications: widget.medications))),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => RecommendationScreen(
+                          heartRate: widget.heartRate,
+                          recommendation: _recommendation,
+                          ageRange: widget.ageRange,
+                          gender: widget.gender,
+                          conditions: widget.conditions,
+                          symptoms: widget.symptoms,
+                          medications: widget.medications,
+                        ),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                  ),
                   child: const Text('Recomendación personalizada', style: TextStyle(fontSize: 16)),
                 ),
               ),
@@ -182,8 +208,24 @@ class _ResultScreenState extends State<ResultScreen> {
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton(
-                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ComparisonScreen(comparison: _comparison, heartRate: widget.heartRate, ageRange: widget.ageRange, gender: widget.gender))),
-                  style: OutlinedButton.styleFrom(foregroundColor: Colors.red, side: BorderSide(color: Colors.red.shade300), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ComparisonScreen(
+                          comparison: _comparison,
+                          heartRate: widget.heartRate,
+                          ageRange: widget.ageRange,
+                          gender: widget.gender,
+                        ),
+                      ),
+                    );
+                  },
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.red,
+                    side: BorderSide(color: Colors.red.shade300),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                  ),
                   child: const Text('Comparar con tu grupo etario', style: TextStyle(fontSize: 16)),
                 ),
               ),
@@ -198,7 +240,11 @@ class _ResultScreenState extends State<ResultScreen> {
                       },
                       icon: const Icon(Icons.save),
                       label: const Text('Guardar'),
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.green, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -207,7 +253,11 @@ class _ResultScreenState extends State<ResultScreen> {
                       onPressed: _goToHome,
                       icon: const Icon(Icons.exit_to_app),
                       label: const Text('Salir'),
-                      style: OutlinedButton.styleFrom(foregroundColor: Colors.red, side: BorderSide(color: Colors.red.shade300), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.red,
+                        side: BorderSide(color: Colors.red.shade300),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                      ),
                     ),
                   ),
                 ],

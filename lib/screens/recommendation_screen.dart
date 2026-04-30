@@ -1,6 +1,4 @@
 // lib/screens/recommendation_screen.dart
-// BOTÓN "VOLVER" EN LUGAR DE "NUEVA MEDICIÓN"
-
 import 'package:flutter/material.dart';
 
 class RecommendationScreen extends StatelessWidget {
@@ -8,7 +6,7 @@ class RecommendationScreen extends StatelessWidget {
   final String recommendation;
   final int ageRange;
   final int gender;
-  final int conditions;
+  final List<int> conditions;
   final int symptoms;
   final int medications;
 
@@ -43,9 +41,6 @@ class RecommendationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isSmallScreen = screenWidth < 600;
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -56,17 +51,13 @@ class RecommendationScreen extends StatelessWidget {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(isSmallScreen ? 20 : 30),
+          padding: const EdgeInsets.all(20),
           child: Column(
             children: [
               Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.red.shade400, Colors.red.shade700],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  gradient: LinearGradient(colors: [Colors.red.shade400, Colors.red.shade700]),
                   borderRadius: BorderRadius.circular(24),
                 ),
                 child: Column(
@@ -74,48 +65,17 @@ class RecommendationScreen extends StatelessWidget {
                     Container(
                       margin: const EdgeInsets.all(20),
                       padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        _getStatusIcon(),
-                        size: 48,
-                        color: Colors.white,
-                      ),
+                      decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), shape: BoxShape.circle),
+                      child: Icon(_getStatusIcon(), size: 48, color: Colors.white),
                     ),
-                    Text(
-                      '$heartRate',
-                      style: const TextStyle(
-                        fontSize: 56,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'latidos por minuto',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white.withOpacity(0.8),
-                      ),
-                    ),
+                    Text('$heartRate', style: const TextStyle(fontSize: 56, fontWeight: FontWeight.bold, color: Colors.white)),
+                    const Text('latidos por minuto', style: TextStyle(fontSize: 14, color: Colors.white70)),
                     const SizedBox(height: 16),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                       margin: const EdgeInsets.only(bottom: 20),
-                      decoration: BoxDecoration(
-                        color: _getStatusColor().withOpacity(0.3),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        _getStatusText(),
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
+                      decoration: BoxDecoration(color: _getStatusColor().withOpacity(0.3), borderRadius: BorderRadius.circular(20)),
+                      child: Text(_getStatusText(), style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white)),
                     ),
                   ],
                 ),
@@ -123,87 +83,30 @@ class RecommendationScreen extends StatelessWidget {
               const SizedBox(height: 24),
               Container(
                 padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade50,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.grey.shade200),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.shade200,
-                      blurRadius: 10,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
-                ),
+                decoration: BoxDecoration(color: Colors.grey.shade50, borderRadius: BorderRadius.circular(20), border: Border.all(color: Colors.grey.shade200)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Row(
-                      children: [
-                        Icon(Icons.medical_services, color: Colors.red, size: 28),
-                        SizedBox(width: 12),
-                        Text(
-                          'Análisis personalizado',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.red,
-                          ),
-                        ),
-                      ],
-                    ),
+                    const Row(children: [Icon(Icons.medical_services, color: Colors.red, size: 28), SizedBox(width: 12), Text('Análisis personalizado', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red))]),
                     const Divider(height: 28),
                     Container(
                       padding: const EdgeInsets.all(12),
                       margin: const EdgeInsets.only(bottom: 16),
-                      decoration: BoxDecoration(
-                        color: Colors.blue.shade50,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Row(
-                        children: [
-                          Icon(Icons.info_outline, color: Colors.blue, size: 20),
-                          SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              'Esta recomendación se basa en tu frecuencia cardíaca actual y los datos demográficos que proporcionaste.',
-                              style: TextStyle(fontSize: 12, color: Colors.black54),
-                            ),
-                          ),
-                        ],
-                      ),
+                      decoration: BoxDecoration(color: Colors.blue.shade50, borderRadius: BorderRadius.circular(12)),
+                      child: const Row(children: [Icon(Icons.info_outline, color: Colors.blue, size: 20), SizedBox(width: 8), Expanded(child: Text('Esta recomendación se basa en tu frecuencia cardíaca actual y los datos demográficos que proporcionaste.', style: TextStyle(fontSize: 12, color: Colors.black54)))]),
                     ),
-                    Text(
-                      recommendation,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        height: 1.6,
-                        color: Colors.black87,
-                      ),
-                    ),
+                    Text(recommendation, style: const TextStyle(fontSize: 15, height: 1.6, color: Colors.black87)),
                   ],
                 ),
               ),
               const SizedBox(height: 24),
-              
-              // Botón VOLVER (no guarda, solo regresa)
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton.icon(
                   onPressed: () => Navigator.pop(context),
                   icon: const Icon(Icons.arrow_back),
-                  label: const Text(
-                    'Volver',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.red,
-                    side: BorderSide(color: Colors.red.shade300),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
+                  label: const Text('Volver', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  style: OutlinedButton.styleFrom(foregroundColor: Colors.red, side: BorderSide(color: Colors.red.shade300), padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))),
                 ),
               ),
             ],

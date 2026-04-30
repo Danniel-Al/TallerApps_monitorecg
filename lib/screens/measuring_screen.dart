@@ -1,5 +1,4 @@
 // lib/screens/measuring_screen.dart
-
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'result_screen.dart';
@@ -44,8 +43,11 @@ class _MeasuringScreenState extends State<MeasuringScreen> with SingleTickerProv
   void _startMeasurement() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
-        if (_timeRemaining > 1) _timeRemaining--;
-        else _stopMeasurement();
+        if (_timeRemaining > 1) {
+          _timeRemaining--;
+        } else {
+          _stopMeasurement();
+        }
       });
     });
     _heartBeatSimulator = Timer.periodic(const Duration(milliseconds: 800), (timer) {

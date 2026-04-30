@@ -1,6 +1,4 @@
 // lib/services/comparison_service.dart
-// SERVICIO DE COMPARACIÓN CON INFORMACIÓN DETALLADA
-
 class ComparisonService {
   static const Map<String, Map<String, dynamic>> _detailedRanges = {
     '18-30': {'min': 60, 'max': 100, 'ideal_min': 65, 'ideal_max': 85, 'description': 'adultos jóvenes activos'},
@@ -14,7 +12,7 @@ class ComparisonService {
     required int heartRate,
     required int ageRange,
     required int gender,
-    required int conditions,
+    required List<int> conditions,
     required int symptoms,
   }) {
     String ageGroup = _getAgeGroup(ageRange);
@@ -65,8 +63,7 @@ class ComparisonService {
   static String _getStatus(int hr, int min, int max) {
     if (hr < min) return 'Por debajo de lo normal';
     if (hr > max) return 'Por encima de lo normal';
-    if (hr >= min && hr <= max) return 'Normal';
-    return 'No determinado';
+    return 'Normal';
   }
   
   static String _getStatusColor(String status) {
@@ -78,14 +75,14 @@ class ComparisonService {
   static String _getPercentile(int hr, int min, int max) {
     if (hr < min) {
       int diff = min - hr;
-      if (diff <= 5) return 'Ligeramente por debajo (${diff} lpm)';
-      if (diff <= 10) return 'Moderadamente por debajo (${diff} lpm)';
-      return 'Significativamente por debajo (${diff} lpm)';
+      if (diff <= 5) return 'Ligeramente por debajo ($diff lpm)';
+      if (diff <= 10) return 'Moderadamente por debajo ($diff lpm)';
+      return 'Significativamente por debajo ($diff lpm)';
     } else if (hr > max) {
       int diff = hr - max;
-      if (diff <= 5) return 'Ligeramente por encima (${diff} lpm)';
-      if (diff <= 10) return 'Moderadamente por encima (${diff} lpm)';
-      return 'Significativamente por encima (${diff} lpm)';
+      if (diff <= 5) return 'Ligeramente por encima ($diff lpm)';
+      if (diff <= 10) return 'Moderadamente por encima ($diff lpm)';
+      return 'Significativamente por encima ($diff lpm)';
     } else {
       int center = (min + max) ~/ 2;
       if (hr <= center) return 'En el rango normal bajo';
@@ -95,15 +92,15 @@ class ComparisonService {
   
   static String _buildDetailedRecommendation(
     int hr, String status, int min, int max, int idealMin, int idealMax,
-    String ageGroup, String gender, String description, int conditions, int symptoms
+    String ageGroup, String gender, String description, List<int> conditions, int symptoms
   ) {
     String rec = '';
     
     if (status == 'Normal') {
       rec = "✅ **¡Tu ritmo cardíaco es normal!**\n\n"
-          "Para ${description} de tu grupo etario (${ageGroup} años), lo esperado es un rango de ${min}-${max} lpm. "
-          "Tu medición de ${hr} lpm está dentro de los parámetros saludables.\n\n"
-          "El rango ideal para tu edad es de ${idealMin}-${idealMax} lpm. "
+          "Para $description de tu grupo etario ($ageGroup años), lo esperado es un rango de $min-$max lpm. "
+          "Tu medición de $hr lpm está dentro de los parámetros saludables.\n\n"
+          "El rango ideal para tu edad es de $idealMin-$idealMax lpm. "
           "Tu corazón está funcionando dentro de lo esperado.\n\n";
           
       if (hr > idealMax) {
@@ -115,27 +112,26 @@ class ComparisonService {
       }
     } else if (status == 'Por debajo de lo normal') {
       rec = "🧡 **Tu ritmo cardíaco está por debajo de lo esperado (Bradicardia)**\n\n"
-          "Para tu grupo etario (${ageGroup} años), el rango normal es de ${min}-${max} lpm. "
-          "Tu medición de ${hr} lpm está por debajo de ese límite.\n\n"
+          "Para tu grupo etario ($ageGroup años), el rango normal es de $min-$max lpm. "
+          "Tu medición de $hr lpm está por debajo de ese límite.\n\n"
           "**Esto puede significar:**\n"
           "• **Bueno**: Si eres deportista, puede ser una señal de excelente condición física.\n"
           "• **Precaución**: Si no haces ejercicio, podría indicar que tu corazón bombea con menos fuerza.\n\n"
           "**Síntomas a vigilar:** Fatiga, mareos, desmayos, confusión o dificultad para hacer ejercicio.\n\n";
     } else {
       rec = "❤️‍🔥 **Tu ritmo cardíaco está por encima de lo esperado (Taquicardia)**\n\n"
-          "Para tu grupo etario (${ageGroup} años), el rango normal es de ${min}-${max} lpm. "
-          "Tu medición de ${hr} lpm supera este límite.\n\n"
+          "Para tu grupo etario ($ageGroup años), el rango normal es de $min-$max lpm. "
+          "Tu medición de $hr lpm supera este límite.\n\n"
           "**Causas frecuentes temporales:** Estrés, ansiedad, cafeína, deshidratación, fiebre o ejercicio reciente.\n\n"
           "**Síntomas a vigilar:** Palpitaciones, dolor en el pecho, falta de aire, mareos o desmayos.\n\n";
     }
     
-    // Añadir consideraciones adicionales
-    if (conditions > 0) {
+    if (conditions.isNotEmpty) {
       rec += "⚠️ **Considera tu historial médico**: Tienes antecedentes cardíacos reportados. "
             "Comparte estas mediciones con tu médico tratante.\n\n";
     }
     
-    if (symptoms > 0 && symptoms != 0) {
+    if (symptoms > 0) {
       rec += "🤒 **Coincidencia con síntomas**: Has reportado síntomas recientes. "
             "Si los síntomas persisten junto con este valor, agenda una consulta.\n\n";
     }

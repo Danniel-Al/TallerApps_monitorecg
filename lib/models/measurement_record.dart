@@ -1,6 +1,4 @@
 // lib/models/measurement_record.dart
-// CON NUEVO CAMPO correlationAnalysis
-
 class MeasurementRecord {
   final String id;
   final DateTime dateTime;
@@ -13,7 +11,7 @@ class MeasurementRecord {
   final String recommendation;
   final String comparisonStatus;
   final String comparisonText;
-  final String correlationAnalysis;  // NUEVO CAMPO
+  final String correlationAnalysis;
 
   MeasurementRecord({
     required this.id,

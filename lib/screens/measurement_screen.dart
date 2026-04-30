@@ -1,5 +1,4 @@
 // lib/screens/measurement_screen.dart
-
 import 'package:flutter/material.dart';
 import 'calibration_screen.dart';
 
@@ -38,13 +37,32 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
             children: [
               Container(
                 padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(color: Colors.red.shade50, shape: BoxShape.circle),
-                child: const Icon(Icons.favorite, size: 64, color: Colors.red),
+                decoration: BoxDecoration(
+                  color: Colors.red.shade50,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.favorite,
+                  size: 64,
+                  color: Colors.red,
+                ),
               ),
               const SizedBox(height: 32),
-              const Text('Medición de frecuencia cardíaca', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.red), textAlign: TextAlign.center),
+              const Text(
+                'Medición de frecuencia cardíaca',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red,
+                ),
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: 16),
-              const Text('Antes de comenzar, te guiaremos con una breve calibración.', style: TextStyle(fontSize: 14, color: Colors.black54), textAlign: TextAlign.center),
+              const Text(
+                'Antes de comenzar, te guiaremos con una breve calibración para obtener una medición más precisa.',
+                style: TextStyle(fontSize: 14, color: Colors.black54),
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: 48),
               SizedBox(
                 width: double.infinity,
@@ -68,9 +86,14 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
                     backgroundColor: Colors.red,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
                   ),
-                  child: const Text('Iniciar calibración', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  child: const Text(
+                    'Iniciar calibración',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
             ],
