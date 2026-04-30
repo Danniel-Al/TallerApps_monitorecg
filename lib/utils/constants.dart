@@ -12,7 +12,6 @@ const List<String> ageRanges = [
 const List<String> genders = [
   'Femenino',
   'Masculino',
-  'Prefiero no decirlo',
 ];
 
 // Antecedentes cardíacos - AHORA CON TABAQUISMO
